@@ -1,0 +1,301 @@
+/* =========================
+   COPING HUB PAGE
+========================= */
+.copinghub-page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100%;
+  min-width: 0;
+  background: var(--bg-main);
+  color: var(--text-main);
+}
+
+/* =========================
+   HEADER
+========================= */
+.copinghub-header {
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.hub-title {
+  font-weight: 700;
+  color: var(--text-main);
+  margin-left: 54px;
+}
+
+.hub-search {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+}
+
+.hub-search input {
+  width: 100%;
+  max-width: 720px;
+  min-width: 280px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 2px solid var(--accent);
+  background: var(--bg-card);
+  color: var(--text-main);
+}
+
+.hub-search input::placeholder {
+  color: var(--text-muted);
+}
+
+.hub-search button {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.bookmark-icon {
+  width: 36px;
+  height: 36px;
+  cursor: pointer;
+}
+
+[data-theme="dark"] .bookmark-icon {
+  filter: invert(1);
+}
+
+/* =========================
+   CONTENT LAYOUT
+========================= */
+.copinghub-content {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  flex: 1;
+  min-height: 0;
+}
+
+/* =========================
+   LEFT COLUMN (RECOMMENDED)
+========================= */
+.copinghub-left {
+  padding: 16px;
+  background: var(--bg-card);
+  border-right: 1px solid var(--border-color);
+}
+
+.strategy-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  padding: 12px;
+  margin-bottom: 16px;
+}
+
+.strategy-card a {
+  font-weight: 700;
+  color: var(--text-main);
+  text-decoration: none;
+  transition: color 0.2s ease, text-decoration-color 0.2s ease;
+}
+
+.strategy-card a:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+.author {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* Clickable author name */
+.author-clickable {
+  color: var(--accent);
+  cursor: pointer;
+  user-select: none;
+}
+
+/* Hover effect */
+.author-clickable:hover {
+  text-decoration: underline;
+}
+
+.hub-tag {
+  display: inline-block;
+  font-size: 13px;
+  color: var(--accent);
+  cursor: pointer;
+  user-select: none;
+  margin-right: 8px;
+  margin-bottom: 8px;
+}
+
+.hub-tag:hover {
+  text-decoration: underline;
+}
+
+.desc {
+  font-size: 14px;
+  color: var(--text-main);
+
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+
+  line-clamp: 2;
+  -webkit-line-clamp: 2;
+
+  overflow: hidden;
+
+  line-height: 1.5;
+}
+
+
+/* =========================
+   STRATEGY TITLE LINKS
+========================= */
+.strategy-link {
+  color: var(--text-main);
+  text-decoration: none;
+  font-weight: 700;
+  transition: color 0.2s ease;
+}
+
+.strategy-link:visited {
+  color: var(--text-main);
+}
+
+.strategy-link:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+/* =========================
+   RIGHT COLUMN (RESULTS)
+========================= */
+.copinghub-right {
+  padding: 16px;
+  background: var(--bg-main);
+  display: flex;
+  flex-direction: column;
+}
+
+.result-card {
+  position: relative;
+  padding-top: 12px;
+  padding-bottom: 0px;
+  min-height: 160px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.result-card h4 {
+  margin-top: 5px;
+
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  line-clamp: 1;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+}
+
+.result-card h4:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+/* ==== FINAL CLAMP FIX ==== */
+.result-card .desc {
+  display: -webkit-box !important;
+  -webkit-box-orient: vertical !important;
+  -webkit-line-clamp: 2 !important;
+  line-clamp: 2 !important;
+
+  overflow: hidden !important;
+
+  margin: 0 !important;
+  padding: 0 !important;
+  line-height: 1.5;
+}
+
+.bookmark {
+  position: absolute;
+  top: 22px;
+  right: 0;
+
+  background: transparent;
+  border: none;
+  cursor: pointer;
+
+  font-size: 22px;
+  line-height: 1;
+  color: #ffffff;
+}
+
+.bookmark.active {
+  color: #facc15;
+}
+
+.pagination {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+
+  margin: 24px auto 24px;
+
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* group numbers */
+.page-numbers {
+  display: inline-flex;
+  gap: 6px;
+}
+
+/* buttons reset */
+.pagination button {
+  background: none;
+  color: var(--text-main);
+  border: none;
+  padding: 4px 6px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+/* active page */
+.page-number.active {
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+/* arrows */
+.page-nav {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  border-radius: 4px;
+  padding: 4px 8px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.page-nav:hover:not(:disabled) {
+  background: var(--bg-main);
+}
+
+.page-nav:disabled {
+  background: #f5f5f5;
+}
+
+.pagination button:disabled {
+  opacity: 0.3;
+  cursor: default;
+}

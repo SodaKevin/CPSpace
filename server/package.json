@@ -1,0 +1,34 @@
+{
+  "name": "cpspace-social",
+  "version": "1.0.0",
+  "description": "This repository serves as the single source of truth for the CPSpace social and emotion-sharing subsystem.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JeepLOL1359/cpspace-social.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/JeepLOL1359/cpspace-social/issues"
+  },
+  "homepage": "https://github.com/JeepLOL1359/cpspace-social#readme",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "firebase-admin": "^13.6.0",
+    "openai": "^6.16.0"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}

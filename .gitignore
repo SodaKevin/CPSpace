@@ -1,0 +1,29 @@
+# Python
+server/venv/
+__pycache__/
+*.pyc
+
+# Node
+client/node_modules/
+client/dist/
+
+# Environment
+.env
+.env.local
+
+# OS / IDE
+.DS_Store
+.vscode/
+
+# Ignore ML models
+server/model/
+*.safetensors
+
+# Ignore Firebase Private Key
+firebase/*.json
+
+# Ignore command for commiting the update to git
+gitCommand.txt
+
+#Ignore node.js related files
+node_modules/

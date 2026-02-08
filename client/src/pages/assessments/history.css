@@ -1,0 +1,95 @@
+.history h2 {
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+/* ---------- EMPTY STATE ---------- */
+.history-empty {
+  background: var(--bg-main);
+  border: 1px dashed var(--border-color);
+  border-radius: 10px;
+  padding: 32px;
+  text-align: center;
+}
+
+.history-empty button {
+  margin-top: 16px;
+  padding: 8px 18px;
+  border-radius: 20px;
+  border: none;
+  cursor: pointer;
+  background: var(--accent-soft);
+}
+
+/* ---------- HISTORY LIST ---------- */
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.history-card {
+  background: var(--bg-main);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+/* Top row */
+.history-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.history-main h3 {
+  margin: 0;
+}
+
+.history-date {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* Meta row */
+.history-meta {
+  display: flex;
+  gap: 24px;
+  margin: 12px 0;
+  font-size: 14px;
+}
+
+/* Actions */
+.history-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.history-actions button {
+  padding: 6px 16px;
+  border-radius: 18px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+/* Severity colors (same as report) */
+.severity.minimal {
+  color: #4caf50;
+}
+
+.severity.mild {
+  color: #8bc34a;
+}
+
+.severity.moderate {
+  color: #ffc107;
+}
+
+.severity.moderately\ severe {
+  color: #ff9800;
+}
+
+.severity.severe {
+  color: #f44336;
+}

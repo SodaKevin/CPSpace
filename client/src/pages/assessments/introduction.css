@@ -1,0 +1,60 @@
+.page-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 40px 24px;
+}
+
+.assessment-panel {
+  width: 100%;
+  max-width: 900px;
+  background: var(--bg-card);
+  padding: 32px;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+}
+
+/* Existing styles */
+.introduction h2 {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.introduction-box {
+  background: var(--accent-soft);
+  color: #000000;
+  padding: 24px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+.introduction-quote {
+  text-align: center;
+  font-style: italic;
+  margin: 20px 0 30px;
+  color: var(--text-muted);
+}
+
+.introduction-actions {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+}
+
+.introduction-actions button {
+  padding: 10px 24px;
+  border-radius: 24px;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.introduction-actions .primary {
+  background: #4caf50;
+  color: white;
+}
+
+.introduction-actions .secondary {
+  background: #666;
+  color: white;
+}

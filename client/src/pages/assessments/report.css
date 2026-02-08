@@ -1,0 +1,97 @@
+.report h2 {
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+/* ---------- REPORT CARD ---------- */
+.report-card {
+  background: var(--bg-main);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 24px;
+  margin: 24px 0;
+}
+
+/* ---------- STRATEGY LINKS ---------- */
+.report-card a {
+  color: var(--text-main);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.report-card a:hover {
+  text-decoration: none;
+  opacity: 0.85;
+}
+
+.report-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.report-row:last-child {
+  border-bottom: none;
+}
+
+.label {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.value {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* ---------- SEVERITY COLORS ---------- */
+.severity.minimal {
+  color: #4caf50;
+}
+
+.severity.mild {
+  color: #8bc34a;
+}
+
+.severity.moderate {
+  color: #ffc107;
+}
+
+.severity.moderately\ severe {
+  color: #ff9800;
+}
+
+.severity.severe {
+  color: #f44336;
+}
+
+/* ---------- NOTE ---------- */
+.report-note {
+  background: var(--accent-soft);
+  color: #000000;
+  border-radius: 8px;
+  padding: 16px;
+  font-size: 14px;
+  margin-bottom: 24px;
+}
+
+/* ---------- ACTIONS ---------- */
+.report-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+}
+
+.report-actions button {
+  padding: 8px 18px;
+  border-radius: 20px;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.report-actions .primary {
+  background: var(--accent);
+  color: #fff;
+}

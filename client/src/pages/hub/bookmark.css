@@ -1,0 +1,177 @@
+.bookmark-page {
+  padding: 24px 48px;
+  background: var(--bg-main);
+  color: var(--text-main);
+
+  width: 100%;
+  max-width: 100%;
+}
+
+/* =========================
+   BOOKMARK CARD (FIXED SIZE)
+========================= */
+.bookmark-card {
+  position: relative;
+  padding: 16px 56px 16px 0;
+  border-bottom: 1px solid var(--border-color);
+
+  width: 100%;
+  min-height: 160px;
+
+  background: transparent;
+}
+
+/* =========================
+   REMOVE BUTTON (X)
+========================= */
+.bookmark-remove-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+
+  width: 28px;
+  height: 28px;
+
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+
+  color: #ff6b6b;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1;
+
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.bookmark-remove-btn:hover {
+  background: rgba(255, 107, 107, 0.15);
+  color: #ff4d4f;
+}
+
+/* =========================
+   TITLE
+========================= */
+.result-card h4 {
+  margin-top: 5px;
+
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  line-clamp: 1;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+}
+
+.result-card h4:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+/* =========================
+   LINK
+========================= */
+.strategy-link {
+  color: var(--text-main);
+  text-decoration: none;
+  font-weight: 700;
+  transition: color 0.2s ease;
+}
+
+.strategy-link:visited {
+  color: var(--text-main);
+}
+
+.strategy-link:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+/* =========================
+   META
+========================= */
+.author {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.tag {
+  font-size: 13px;
+  color: var(--accent);
+}
+
+/* =========================
+   DESCRIPTION (CLAMPED)
+========================= */
+.desc {
+  display: -webkit-box !important;
+  -webkit-box-orient: vertical !important;
+  -webkit-line-clamp: 2 !important;
+  line-clamp: 2 !important;
+
+  overflow: hidden !important;
+
+  margin: 0 !important;
+  padding: 0 !important;
+  line-height: 1.5;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  gap: 12px;
+
+  margin: 32px 0 24px;
+}
+
+/* group numbers */
+.page-numbers {
+  display: inline-flex;
+  gap: 6px;
+}
+
+/* buttons reset */
+.pagination button {
+  background: none;
+  color: var(--text-main);
+  border: none;
+  padding: 4px 6px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+/* active page */
+.page-number.active {
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+/* arrows */
+.page-nav {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  border-radius: 4px;
+  padding: 4px 8px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.page-nav:hover:not(:disabled) {
+  background: var(--bg-main);
+}
+
+.page-nav:disabled {
+  background: #f5f5f5;
+}
+
+.pagination button:disabled {
+  opacity: 0.3;
+  cursor: default;
+}

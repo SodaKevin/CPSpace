@@ -1,0 +1,342 @@
+/* =========================
+   PAGE LAYOUT
+========================= */
+
+.chatbot-page {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  background: var(--bg-main);
+  color: var(--text-main);
+  height: 100vh;
+}
+
+/* =========================
+   CHAT AREA (LEFT)
+========================= */
+
+.chat-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-main);
+  border-right: 1px solid var(--border-color);
+}
+
+/* Header */
+.chat-header {
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chat-header h3 {
+  margin: 0;
+  font-size: 18px;
+}
+
+/* =========================
+   CHAT MENU (⋯)
+========================= */
+
+.chat-menu-wrapper {
+  position: relative;
+}
+
+.chat-menu-btn {
+  background: transparent;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  color: var(--text-main);
+}
+
+.chat-menu-btn:hover {
+  color: var(--accent);
+}
+
+/* Dropdown panel */
+.chat-menu {
+  position: absolute;
+  right: 0;
+  top: 28px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  min-width: 160px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  z-index: 10;
+}
+
+.chat-menu button {
+  width: 100%;
+  padding: 10px 12px;
+  background: #6b7280;          /* grey */
+  border: none;
+  border-radius: 4px;
+  text-align: left;
+  cursor: pointer;
+  color: #ffffff;               /* white text */
+  font-size: 14px;
+  transition: background 0.15s ease;
+}
+
+.chat-menu button + button {
+  border-top: 1px solid var(--border-color);
+}
+
+.chat-menu button:hover {
+  background: #4c4f55;      /* darker grey on hover */
+}
+
+/* =========================
+   MESSAGES
+========================= */
+
+.chat-messages {
+  flex: 1;
+  padding: 24px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.message {
+  max-width: 70%;
+  line-height: 1.5;
+}
+
+.message.bot {
+  align-self: flex-start;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  padding: 14px 16px;
+  border-radius: 12px;
+}
+
+.message.user {
+  align-self: flex-end;
+  background: var(--accent);
+  color: #fff;
+  padding: 14px 16px;
+  border-radius: 12px;
+}
+
+/* =========================
+   INPUT
+========================= */
+
+.chat-input {
+  display: flex;
+  gap: 12px;
+  padding: 16px 16px 24px 16px;
+  border-top: 1px solid var(--border-color);
+  background: var(--bg-card);
+}
+
+.chat-input input {
+  flex: 1;
+  border-radius: 24px;
+  border: 1px solid var(--border-color);
+  padding: 10px 16px;
+  background: var(--bg-main);
+  color: var(--text-main);
+  outline: none;
+}
+
+.chat-input input::placeholder {
+  color: var(--text-muted);
+}
+
+.chat-input button {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: var(--accent);
+  color: white;
+  cursor: pointer;
+}
+
+/* =========================
+   SIDEBAR (RIGHT)
+========================= */
+
+.chatbot-sidepanel {
+  width: 260px;
+  background: var(--bg-card);
+  border-left: 1px solid var(--border-color);
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.side-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.new-chat-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: var(--accent-soft);
+  cursor: pointer;
+}
+
+.side-card {
+  padding: 10px 12px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--bg-main);
+  border: 2px solid var(--border-color);
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.side-card:hover {
+  background: rgba(0, 0, 0, 0.04);
+  transform: translateY(-1px);
+}
+
+.side-card.active {
+  background: rgba(0, 0, 0, 0.08);
+  font-weight: 600;
+}
+
+[data-theme="dark"] .side-card:hover {
+  background: #4c4f55;
+  transform: translateY(-1px);
+}
+
+[data-theme="dark"] .side-card.active {
+  background: #6b7280;
+  font-weight: 600;
+}
+
+.chat-delete {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.modal {
+  background: var(--bg-card);
+  color: var(--text-main);
+  width: 520px;
+  max-width: calc(100vw - 40px);
+  padding: 28px 32px;
+  border-radius: 14px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0; /* top:0 right:0 bottom:0 left:0 */
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.modal-actions button {
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+.modal-actions .primary {
+  background: var(--accent);
+  color: white;
+}
+
+.modal select,
+.modal textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-main);
+  color: var(--text-main);
+}
+
+.modal textarea {
+  min-height: 80px;
+  resize: vertical;
+  box-sizing: border-box;
+}
+
+.star-rating {
+  display: flex;
+  gap: 8px;
+}
+
+/* Default star */
+.star {
+  font-size: 32px;
+  cursor: pointer;
+  color: #d1d5db;               /* grey */
+  transition: color 0.15s ease, transform 0.1s ease;
+  user-select: none;
+  background: none;
+  border: none;
+  outline: none;
+  box-shadow: none;
+}
+
+/* Hovered or selected stars */
+.star.filled {
+  color: #facc15;               /* yellow */
+}
+
+/* Hover preview */
+.star:hover {
+  color: #facc15;
+}
+
+/* Small interaction polish */
+.star:hover {
+  transform: scale(1.15);
+}
+
+.star:active {
+  transform: scale(0.95);
+}
+
+.strategy-link {
+  color: var(--accent) !important;
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+.strategy-link:hover {
+  opacity: 0.85;
+}
+
+.strategy-suggestion {
+  margin-top: 12px;
+  padding: 12px 14px;
+  background: color-mix(in srgb, var(--accent) 12%, var(--bg-card));
+  border-radius: 8px;
+}

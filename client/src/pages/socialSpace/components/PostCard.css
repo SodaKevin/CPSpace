@@ -1,0 +1,208 @@
+/* // socialSpace/components/PostCard.css */
+
+/* ===============================
+   POST CARD
+=============================== */
+.post-card {
+  padding: 16px 18px;
+  border-radius: 14px;
+
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+
+  color: var(--text-main);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  transition: background 0.2s ease, border 0.2s ease;
+}
+
+/* ===============================
+   HEADER
+=============================== */
+.post-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.edited-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+/* ===============================
+   BODY
+=============================== */
+.post-card p {
+  margin: 0;
+  line-height: 1.6;
+  font-size: 15px;
+  color: var(--text-main);
+  white-space: pre-wrap;
+}
+
+/* ===============================
+   EDIT MODE
+=============================== */
+.post-card textarea {
+  width: 100%;
+  min-height: 90px;
+  resize: vertical;
+
+  padding: 10px 12px;
+  border-radius: 10px;
+
+  background: transparent;
+  border: 1px solid var(--border-color);
+
+  color: var(--text-main);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.post-card textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+/* ===============================
+   EMOTION CATEGORIES
+=============================== */
+.emotion-categories {
+  display: flex;
+  gap: 8px;
+}
+
+.emotion-categories button {
+  padding: 6px 12px;
+  border-radius: 999px;
+
+  background: transparent;
+  border: 1px solid var(--border-color);
+
+  font-size: 13px;
+  color: var(--text-muted);
+  cursor: pointer;
+
+  transition: all 0.15s ease;
+}
+
+.emotion-categories button.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.emotion-categories button:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ===============================
+   FEELINGS TAGS
+=============================== */
+.feelings {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tag {
+  padding: 5px 10px;
+  border-radius: 999px;
+
+  font-size: 12px;
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.15s ease;
+}
+
+.tag:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.tag.active {
+  background: rgba(99, 102, 241, 0.15); /* accent soft */
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ===============================
+   OWNER ACTIONS (Edit / Delete)
+=============================== */
+.post-owner-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.post-owner-actions button {
+  background: transparent;
+  border: none;
+
+  font-size: 13px;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.post-owner-actions button:hover {
+  color: var(--accent);
+}
+
+/* ===============================
+   POST ACTIONS (Vote / Comment)
+=============================== */
+.post-actions {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+
+.post-actions button {
+  background: transparent;
+  border: none;
+
+  font-size: 14px;
+  color: var(--text-muted);
+  cursor: pointer;
+
+  transition: color 0.15s ease, transform 0.15s ease;
+}
+
+.post-actions button:hover {
+  color: var(--accent);
+  transform: translateY(-1px);
+}
+
+/* ===============================
+   SAVE BUTTON (EDIT MODE)
+=============================== */
+.post-card > button {
+  align-self: flex-start;
+
+  padding: 6px 14px;
+  border-radius: 8px;
+
+  background: var(--accent);
+  border: none;
+
+  color: #fff;
+  font-size: 13px;
+  cursor: pointer;
+
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.post-card > button:hover {
+  transform: translateY(-1px);
+}
