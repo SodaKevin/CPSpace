@@ -44,10 +44,11 @@ export default function CopingHub() {
   const scrollTopRef = useRef(null);
 
   function handleTagClick(tag) {
-    setInputValue(tag);
-    setSearchQuery(tag);
+    const label = TAG_LABELS[tag] || tag;
+    setInputValue(label);     // pretty text
+    setSearchQuery(tag);      // canonical value for search
   }
-
+  
   function handleSearchClick(value) {
     setInputValue(value);
     setSearchQuery(value);

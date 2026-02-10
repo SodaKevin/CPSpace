@@ -106,9 +106,8 @@ export default function EditStrategy() {
       instructions: form.instructions.trim(),
       tags: form.tags
         .split(",")
-        .map((t) => t.trim())
+        .map((t) => t.trim().toUpperCase())
         .filter(Boolean),
-
       audioUrl,
       videoUrl,
     };

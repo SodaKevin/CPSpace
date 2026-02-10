@@ -4,6 +4,7 @@ import {
   getAllStrategies,
   deleteStrategy,
 } from "../../../services/adminHubService";
+import { TAG_LABELS } from "../../../domain/tagLabels";
 import "./strategyList.css";
 
 export default function AdminStrategyList() {
@@ -122,7 +123,11 @@ export default function AdminStrategyList() {
                 <td>{s.title}</td>
                 <td>{s.author}</td>
                 <td>
-                  {Array.isArray(s.tags) ? s.tags.join(", ") : ""}
+                  {Array.isArray(s.tags)
+                    ? s.tags
+                        .map(tag => TAG_LABELS[tag] || tag)
+                        .join(", ")
+                    : ""}
                 </td>
                 <td className="actions">
                   <Link
