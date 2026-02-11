@@ -194,6 +194,18 @@
   color: var(--text-main);
 }
 
+.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+.auto-locked-message {
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
 /* =========================
    ANIMATION
 ========================= */

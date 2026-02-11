@@ -153,22 +153,28 @@ export default function Preferences() {
       <div className="setting-row">
         <label>Theme</label>
         <div className="theme-toggle">
-          <div
-            className={`theme-circle ${prefs.themeMode === "light" ? "active" : ""}`}
-            onClick={() => {
-              applyTheme("light");
-              localStorage.setItem("theme", "light");
-              savePrefs({ themeMode: "light" });
-            }}
-          />
-          <div
-            className={`theme-circle dark ${prefs.themeMode === "dark" ? "active" : ""}`}
-            onClick={() => {
-              applyTheme("dark");
-              localStorage.setItem("theme", "dark");
-              savePrefs({ themeMode: "dark" });
-            }}
-          />
+        <div
+          className={`theme-circle ${prefs.themeMode === "light" ? "active" : ""} ${
+            prefs.autoPersonalisation ? "disabled" : ""
+          }`}
+          onClick={() => {
+            if (prefs.autoPersonalisation) return;
+            applyTheme("light");
+            localStorage.setItem("theme", "light");
+            savePrefs({ themeMode: "light" });
+          }}
+        />
+        <div
+          className={`theme-circle dark ${prefs.themeMode === "dark" ? "active" : ""} ${
+            prefs.autoPersonalisation ? "disabled" : ""
+          }`}
+          onClick={() => {
+            if (prefs.autoPersonalisation) return; // 🔒 block
+            applyTheme("dark");
+            localStorage.setItem("theme", "dark");
+            savePrefs({ themeMode: "dark" });
+          }}
+        />
         </div>
       </div>
 
@@ -176,18 +182,19 @@ export default function Preferences() {
       <div className="setting-row">
         <label>Color Palette</label>
         <div className="color-palette">
-          {Object.keys(COLOR_MAP).map((color) => (
-            <div
-              key={color}
-              className={`color-circle ${color} ${
-                prefs.colorPalette === color ? "selected" : ""
-              }`}
-              onClick={() => {
-                applyColor(color);
-                savePrefs({ colorPalette: color });
-              }}
-            />
-          ))}
+        {Object.keys(COLOR_MAP).map((color) => (
+          <div
+            key={color}
+            className={`color-circle ${color} ${
+              prefs.colorPalette === color ? "selected" : ""
+            } ${prefs.autoPersonalisation ? "disabled" : ""}`}
+            onClick={() => {
+              if (prefs.autoPersonalisation) return; // 🔒 block
+              applyColor(color);
+              savePrefs({ colorPalette: color });
+            }}
+          />
+        ))}
         </div>
       </div>
 
@@ -316,6 +323,12 @@ export default function Preferences() {
           </div>
         </div>
       </div>
+    )}
+    {prefs.autoPersonalisation && (
+      <p className="auto-locked-message">
+        Manual theme and color settings are disabled while Auto Personalisation is enabled.
+        Please turn it off to customise manually.
+      </p>
     )}
     </div>
   );
