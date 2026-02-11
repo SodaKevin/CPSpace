@@ -32,9 +32,11 @@ import AssessmentHistory from "./pages/assessments/history";
 
 // Chatbot
 import Chatbot from "./pages/chatbot/chatbot";
+import ChatbotFeedback from "./pages/admin/chatbotFeedback";
 
 // Coping hub
 import CopingHub from "./pages/hub/copingHub";
+import Bookmark from "./pages/hub/bookmark";
 import StrategyDetail from "./pages/hub/strategyDetail";
 import StrategyList from "./pages/hub/adminHub/strategyList";
 import AddStrategy from "./pages/hub/adminHub/addStrategy";
@@ -219,9 +221,14 @@ function App() {
 
           {/* CHATBOT */}
           <Route path="chatbot" element={<Chatbot />} />
+          <Route
+            path="/admin/chatbot-feedback"
+            element={isAdmin ? <ChatbotFeedback /> : <Navigate to="/chatbot" />}
+          />
 
           {/* COPING HUB */}
           <Route path="coping-hub" element={<CopingHub />} />
+          <Route path="coping-hub/bookmarks" element={<Bookmark />} />
           <Route path="coping-hub/:id" element={<StrategyDetail />} />
           <Route
             path="/admin/strategies/new"

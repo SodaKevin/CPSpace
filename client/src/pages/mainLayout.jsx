@@ -89,9 +89,15 @@ export default function MainLayout() {
           <NavLink to="/settings" className="main-link">Settings</NavLink>
 
           {isAdmin && (
-            <NavLink to="/admin/strategies" className="main-link">
-              Manage Strategies
-            </NavLink>
+            <>
+              <NavLink to="/admin/strategies" className="main-link">
+                Manage Strategies
+              </NavLink>
+
+              <NavLink to="/admin/chatbot-feedback" className="main-link">
+                Chatbot Feedback
+              </NavLink>
+            </>
           )}
         </nav>
 

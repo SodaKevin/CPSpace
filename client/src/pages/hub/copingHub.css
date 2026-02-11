@@ -56,9 +56,25 @@
   height: 40px;
   border-radius: 50%;
   background: var(--accent);
-  color: white;
   border: none;
   cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Dark mode fix for search icon */
+[data-theme="dark"] .search-icon {
+  filter: invert(1);
+}
+
+/* Search icon image */
+.search-icon {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+  pointer-events: none; /* prevents image blocking button click */
 }
 
 .bookmark-icon {

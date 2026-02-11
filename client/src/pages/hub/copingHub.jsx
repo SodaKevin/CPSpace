@@ -3,10 +3,8 @@
 
 import "./copingHub.css";
 import { Link, useLocation } from "react-router-dom";
-
 import { useEffect, useState, useRef } from "react";
 import { getAllStrategies } from "../../services/adminHubService";
-
 import { getAuth } from "firebase/auth";
 import { onAuthStateChanged } from "firebase/auth";
 import {
@@ -22,10 +20,10 @@ import {
 import { db } from "../../firebaseConfig";
 
 import bookmarkIcon from "../../assets/bookmark.png";
+import searchGlass from "../../assets/searchGlass.png";
 
 import { getUserDiaries } from "../../services/diaryService";
 import { getRecommendedStrategies } from "../../services/hubRecommendationService";
-
 import { TAG_LABELS } from "../../domain/tagLabels";
 
 export default function CopingHub() {
@@ -216,18 +214,22 @@ export default function CopingHub() {
             }}
             />
             <button onClick={() => setSearchQuery(inputValue)}>
-            🔍
+              <img 
+                src={searchGlass} 
+                alt="Search" 
+                className="search-icon"
+              />
             </button>
         </div>
 
         <div className="hub-actions">
-          <a href="/coping-hub/bookmarks">
-            <img
-              src={bookmarkIcon}
-              alt="Bookmarked strategies"
-              className="bookmark-icon"
-            />
-          </a>
+        <Link to="/coping-hub/bookmarks">
+          <img
+            src={bookmarkIcon}
+            alt="Bookmarked strategies"
+            className="bookmark-icon"
+          />
+        </Link>
         </div>
       </header>
 

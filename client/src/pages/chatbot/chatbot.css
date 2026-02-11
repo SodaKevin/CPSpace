@@ -227,6 +227,17 @@
   background: transparent;
   border: none;
   cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.trash-icon {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  pointer-events: none;
 }
 
 .modal {

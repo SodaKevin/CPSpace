@@ -1,0 +1,94 @@
+/* =========================
+   CHATBOT FEEDBACK PAGE
+========================= */
+
+.chatbot-feedback-page {
+  padding: 24px 48px;
+  background: var(--bg-main);
+  color: var(--text-main);
+
+  width: 100%;
+  max-width: 100%;
+}
+
+/* =========================
+   PAGE TITLE
+========================= */
+
+.chatbot-feedback-page h2 {
+  margin-bottom: 24px;
+  font-weight: 700;
+}
+
+/* =========================
+   FEEDBACK CARD
+========================= */
+
+.feedback-card {
+  position: relative;
+  padding: 16px 56px 16px 0;
+  border-bottom: 1px solid var(--border-color);
+
+  width: 100%;
+  min-height: 140px;
+
+  background: transparent;
+}
+
+/* =========================
+   META INFO
+========================= */
+
+.feedback-user {
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.feedback-rating {
+  font-size: 14px;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+
+.feedback-message {
+  font-size: 14px;
+  color: var(--text-main);
+  line-height: 1.5;
+}
+
+/* =========================
+   DELETE BUTTON
+========================= */
+
+/* =========================
+   DELETE BUTTON
+========================= */
+
+.feedback-delete-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+
+  padding: 6px 12px;
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+
+  transition: background 0.2s ease;
+}
+
+.feedback-delete-btn:hover {
+  background: #dc2626;
+}
+
+/* =========================
+   EMPTY STATE
+========================= */
+
+.feedback-empty {
+  color: var(--text-muted);
+  margin-top: 12px;
+}

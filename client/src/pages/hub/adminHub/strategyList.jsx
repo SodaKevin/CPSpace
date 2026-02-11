@@ -6,6 +6,7 @@ import {
 } from "../../../services/adminHubService";
 import { TAG_LABELS } from "../../../domain/tagLabels";
 import "./strategyList.css";
+import "../../settings/preferences.css";
 
 export default function AdminStrategyList() {
   const [strategies, setStrategies] = useState([]);
@@ -17,6 +18,9 @@ export default function AdminStrategyList() {
   const [currentPage, setCurrentPage] = useState(1);
 
   const scrollTopRef = useRef(null);
+
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [strategyToDelete, setStrategyToDelete] = useState(null);
 
   useEffect(() => {
     async function fetchStrategies() {
@@ -40,17 +44,19 @@ export default function AdminStrategyList() {
     });
   }, [currentPage]);
 
-  async function handleDelete(id) {
-    const ok = window.confirm(
-      "Are you sure you want to delete this strategy?"
-    );
-    if (!ok) return;
+  async function confirmDelete() {
+    if (!strategyToDelete) return;
 
     try {
-      await deleteStrategy(id);
-      setStrategies((prev) => prev.filter((s) => s.id !== id));
+      await deleteStrategy(strategyToDelete);
+      setStrategies((prev) =>
+        prev.filter((s) => s.id !== strategyToDelete)
+      );
     } catch (err) {
       console.error("Failed to delete strategy:", err);
+    } finally {
+      setShowDeleteConfirm(false);
+      setStrategyToDelete(null);
     }
   }
 
@@ -139,7 +145,10 @@ export default function AdminStrategyList() {
 
                   <button
                     className="delete-btn"
-                    onClick={() => handleDelete(s.id)}
+                    onClick={() => {
+                      setStrategyToDelete(s.id);
+                      setShowDeleteConfirm(true);
+                    }}
                   >
                     Delete
                   </button>
@@ -181,6 +190,33 @@ export default function AdminStrategyList() {
         >
           ›
         </button>
+      </div>
+    )}
+    {showDeleteConfirm && (
+      <div className="pref-modal-overlay">
+        <div className="pref-modal-dialog">
+          <h3>Delete Feedback?</h3>
+
+          <p>
+            This action cannot be undone.
+          </p>
+
+          <div className="pref-modal-actions">
+            <button
+              className="pref-confirm"
+              onClick={confirmDelete}
+            >
+              Delete
+            </button>
+
+            <button
+              className="pref-cancel"
+              onClick={() => setShowDeleteConfirm(false)}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
       </div>
     )}
     </div>

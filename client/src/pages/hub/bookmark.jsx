@@ -47,8 +47,13 @@ export default function Bookmark() {
       // Fetch full strategy objects
       const strategies = await getAllStrategies();
 
+      console.log("Bookmark IDs:", strategyIds);
+      console.log("Strategy IDs:", strategies.map(s => s.id));
+
+      const normalizedBookmarkIds = strategyIds.map(id => id.toLowerCase());
+
       const bookmarkedStrategies = strategies.filter((s) =>
-        strategyIds.includes(s.id)
+        normalizedBookmarkIds.includes(s.id?.toLowerCase())
       );
 
       setBookmarks(bookmarkedStrategies);

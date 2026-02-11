@@ -16,6 +16,8 @@ import "./chatbot.css";
 import { getTodaysEmotion } from "../../services/diaryService";
 import { recommendCopingStrategies } from "../../services/copingStrategyService";
 
+import redTrashCan from "../../assets/redTrashCan.png";
+
 export default function Chatbot() {
   const auth = getAuth();
 
@@ -410,9 +412,11 @@ export default function Chatbot() {
     try {
       await addDoc(collection(db, "chatbotFeedback"), {
         userId: user.uid,
+        username: displayName,
         sessionId: activeSessionId,
         rating: feedbackRating,
         description: feedbackText.trim(),
+        status: "new",
         createdAt: serverTimestamp(),
       });
 
@@ -519,7 +523,11 @@ export default function Chatbot() {
               className="chat-delete"
               onClick={() => deleteChat(s.id)}
             >
-              🗑️
+              <img
+                src={redTrashCan}
+                alt="Delete"
+                className="trash-icon"
+              />
             </button>
           </div>
         ))}
