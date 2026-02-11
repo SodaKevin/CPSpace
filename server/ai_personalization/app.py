@@ -3,8 +3,7 @@ from flask_cors import CORS
 
 from preprocess import preprocess_user_data
 
-from clustering import ( is_small_dataset, fallback_cluster, kmeans_cluster )
-
+from clustering import ( is_small_dataset, fallback_cluster, kmeans_cluster, hierarchical_cluster )
 
 # -----------------------------
 # App setup
@@ -31,9 +30,12 @@ def auto_personalize():
 
     features = preprocess_user_data(data["diaries"])
 
-    if is_small_dataset(features["entries"]):
+    if features["entries"] < 3:
         cluster = fallback_cluster(features)
         method = "rule-based"
+    elif features["entries"] < 10:
+        cluster = hierarchical_cluster(features)
+        method = "hierarchical"
     else:
         cluster = kmeans_cluster(features)
         method = "kmeans"

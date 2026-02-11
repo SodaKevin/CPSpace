@@ -28,7 +28,7 @@ const OPTIONS = [
 
 // GAD-7 severity interpretation
 const getGAD7Severity = (score) => {
-  if (score <= 4) return "Minimal";
+  if (score <= 4) return "None";
   if (score <= 9) return "Mild";
   if (score <= 14) return "Moderate";
   return "Severe";

@@ -30,7 +30,7 @@ const OPTIONS = [
 
 // PHQ-9 severity interpretation
 const getPHQSeverity = (score) => {
-  if (score <= 4) return "Minimal";
+  if (score <= 4) return "None";
   if (score <= 9) return "Mild";
   if (score <= 14) return "Moderate";
   if (score <= 19) return "Moderately Severe";

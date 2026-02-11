@@ -38,6 +38,7 @@ export default function Preferences() {
   const [prefs, setPrefs] = useState(null);
   const auth = getAuth();
   const [showAutoConfirm, setShowAutoConfirm] = useState(false);
+  const [showDisableConfirm, setShowDisableConfirm] = useState(false);
   const [autoLoading, setAutoLoading] = useState(false);
 
   /* === APPLY UI EFFECTS (your old logic) === */
@@ -205,7 +206,10 @@ export default function Preferences() {
           </button>
           <button
             className={!prefs.autoPersonalisation ? "active" : ""}
-            onClick={() => savePrefs({ autoPersonalisation: false })}
+            onClick={() => {
+              if (!prefs.autoPersonalisation) return;
+              setShowDisableConfirm(true);
+            }}
           >
             NO
           </button>
@@ -233,7 +237,8 @@ export default function Preferences() {
                 await savePrefs({ autoPersonalisation: true });
 
                 const diaries = await fetchRecentDiaries(user.uid);
-                console.log("Auto-personalisation diaries:", diaries);
+
+                console.log("Auto-personalisation diaries FULL:", JSON.stringify(diaries, null, 2));
 
                 if (!diaries.length) {
                   alert("Please record at least one emotion diary before using Auto Personalisation.");
@@ -258,6 +263,8 @@ export default function Preferences() {
                 }
 
                 const result = await res.json();
+
+                console.log("Auto cluster result:", result);
                 await applyAutoPersonalisation(result.cluster);
 
                 setAutoLoading(false);
@@ -273,6 +280,36 @@ export default function Preferences() {
                 setShowAutoConfirm(false);
                 await savePrefs({ autoPersonalisation: false });
               }}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
+    {showDisableConfirm && (
+      <div className="pref-modal-overlay">
+        <div className="pref-modal-dialog">
+          <h3>Disable Auto Personalisation?</h3>
+
+          <p>
+            You will return to manual control of theme, colors, and chatbot tone.
+          </p>
+
+          <div className="pref-modal-actions">
+            <button
+              className="pref-confirm"
+              onClick={async () => {
+                await savePrefs({ autoPersonalisation: false });
+                setShowDisableConfirm(false);
+              }}
+            >
+              Confirm
+            </button>
+
+            <button
+              className="pref-cancel"
+              onClick={() => setShowDisableConfirm(false)}
             >
               Cancel
             </button>
