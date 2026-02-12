@@ -3,7 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { addStrategy } from "../../../services/adminHubService";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "../../../firebaseConfig";
-import "./addStrategy.css";
+import { TAG_LABELS } from "../../../domain/tagLabels";
+import "./strategyLayout.css";
 
 export default function AddStrategy() {
   const navigate = useNavigate();
@@ -16,7 +17,7 @@ export default function AddStrategy() {
     author: "",
     description: "",
     instructions: "",
-    tags: "",
+    tags: [],
   });
 
   function handleChange(e) {
@@ -68,10 +69,7 @@ export default function AddStrategy() {
       author: form.author.trim(),
       description: form.description.trim(),
       instructions: form.instructions.trim(),
-      tags: form.tags
-        .split(",")
-        .map(t => t.trim().toUpperCase())
-        .filter(Boolean),
+      tags: form.tags,
       audioUrl,
       videoUrl,
     };
@@ -80,11 +78,29 @@ export default function AddStrategy() {
     navigate("/admin/strategies");
   }
 
+  function toggleTag(tag) {
+    setForm(prev => {
+      const exists = prev.tags.includes(tag);
+
+      if (exists) {
+        return {
+          ...prev,
+          tags: prev.tags.filter(t => t !== tag)
+        };
+      } else {
+        return {
+          ...prev,
+          tags: [...prev.tags, tag]
+        };
+      }
+    });
+  }
+
   return (
-    <div className="add-strategy-page">
+    <div className="strategy-page">
       <h2>Add Coping Strategy</h2>
 
-      <form className="add-strategy-form" onSubmit={handleSubmit}>
+      <form className="strategy-form" onSubmit={handleSubmit}>
         <input
           name="title"
           placeholder="Title"
@@ -117,12 +133,22 @@ export default function AddStrategy() {
           required
         />
 
-        <input
-          name="tags"
-          placeholder="Tags (comma separated)"
-          value={form.tags}
-          onChange={handleChange}
-        />
+        <div className="tag-selection">
+          <label className="section-label">Select Tags</label>
+
+          <div className="tag-options">
+            {Object.entries(TAG_LABELS).map(([key, label]) => (
+              <label key={key} className="tag-checkbox">
+                <input
+                  type="checkbox"
+                  checked={form.tags.includes(key)}
+                  onChange={() => toggleTag(key)}
+                />
+                <span>{label}</span>
+              </label>
+            ))}
+          </div>
+        </div>
 
         <label>Audio (optional)</label>
         <div className="file-input-row">
@@ -162,7 +188,7 @@ export default function AddStrategy() {
           )}
         </div>
 
-        <div className="add-actions">
+        <div className="strategy-actions">
         <button type="submit">Add Strategy</button>
 
         <button

@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getStrategyById } from "../../services/adminHubService";
+import { TAG_LABELS } from "../../domain/tagLabels";
 import "./strategyDetail.css";
 
 import { getAuth } from "firebase/auth";
@@ -98,9 +99,12 @@ export default function StrategyDetail() {
 
       <div className="strategy-meta">
         <span>Author: {strategy.author}</span>
-        <span className="hub-tag">
-          {Array.isArray(strategy.tags) ? strategy.tags.join(", ") : ""}
-        </span>
+        {Array.isArray(strategy.tags) &&
+          strategy.tags.map(tag => (
+            <span key={tag} className="hub-tag">
+              {TAG_LABELS[tag] || tag}
+            </span>
+        ))}
       </div>
 
       <div className="strategy-description">
@@ -108,11 +112,15 @@ export default function StrategyDetail() {
       </div>
 
       {strategy.audioUrl && (
-        <audio controls src={strategy.audioUrl} />
+        <div className="strategy-audio">
+          <audio controls src={strategy.audioUrl} />
+        </div>
       )}
 
       {strategy.videoUrl && (
-        <video controls src={strategy.videoUrl} />
+        <div className="strategy-media">
+          <video controls src={strategy.videoUrl} />
+        </div>
       )}
 
       <div className="strategy-description">

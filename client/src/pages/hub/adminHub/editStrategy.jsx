@@ -6,7 +6,8 @@ import {
 } from "../../../services/adminHubService";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "../../../firebaseConfig";
-import "./EditStrategy.css";
+import { TAG_LABELS } from "../../../domain/tagLabels";
+import "./strategyLayout.css";
 
 export default function EditStrategy() {
   const { id } = useParams();
@@ -25,7 +26,7 @@ export default function EditStrategy() {
     author: "",
     description: "",
     instructions: "",
-    tags: "",
+    tags: [],
   });
 
   useEffect(() => {
@@ -42,7 +43,7 @@ export default function EditStrategy() {
           author: data.author || "",
           description: data.description || "",
           instructions: data.instructions || "",
-          tags: Array.isArray(data.tags) ? data.tags.join(", ") : "",
+          tags: Array.isArray(data.tags) ? data.tags : [],
         });
 
         setExistingAudio(data.audioUrl || null);
@@ -104,10 +105,7 @@ export default function EditStrategy() {
       author: form.author.trim(),
       description: form.description.trim(),
       instructions: form.instructions.trim(),
-      tags: form.tags
-        .split(",")
-        .map((t) => t.trim().toUpperCase())
-        .filter(Boolean),
+      tags: form.tags,
       audioUrl,
       videoUrl,
     };
@@ -120,13 +118,31 @@ export default function EditStrategy() {
     }
   }
 
+  function toggleTag(tag) {
+    setForm(prev => {
+      const exists = prev.tags.includes(tag);
+
+      if (exists) {
+        return {
+          ...prev,
+          tags: prev.tags.filter(t => t !== tag)
+        };
+      } else {
+        return {
+          ...prev,
+          tags: [...prev.tags, tag]
+        };
+      }
+    });
+  }
+
   if (loading) return <p>Loading strategy...</p>;
 
   return (
-    <div className="edit-strategy-page">
+    <div className="strategy-page">
       <h2>Edit Coping Strategy</h2>
 
-      <form className="edit-strategy-form" onSubmit={handleSubmit}>
+      <form className="strategy-form" onSubmit={handleSubmit}>
         <input
           name="title"
           placeholder="Title"
@@ -159,12 +175,22 @@ export default function EditStrategy() {
           required
         />
 
-        <input
-          name="tags"
-          placeholder="Tags (comma separated)"
-          value={form.tags}
-          onChange={handleChange}
-        />
+        <div className="tag-selection">
+          <label className="section-label">Select Tags</label>
+
+          <div className="tag-options">
+            {Object.entries(TAG_LABELS).map(([key, label]) => (
+              <label key={key} className="tag-checkbox">
+                <input
+                  type="checkbox"
+                  checked={form.tags.includes(key)}
+                  onChange={() => toggleTag(key)}
+                />
+                <span>{label}</span>
+              </label>
+            ))}
+          </div>
+        </div>
 
         <label>Audio (optional)</label>
         {existingAudio && (
@@ -234,7 +260,7 @@ export default function EditStrategy() {
           )}
         </div>
 
-        <div className="edit-actions">
+        <div className="strategy-actions">
           <button type="submit">Save Changes</button>
           <button
             type="button"
