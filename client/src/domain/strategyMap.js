@@ -9,7 +9,7 @@ export const STRATEGY_INTENT = {
     ],
   },
 
-  STRETCHING: {
+  STRETCHING: {   
     allowedEmotions: [
       "drained",
       "anxious",

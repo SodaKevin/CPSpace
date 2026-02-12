@@ -24,6 +24,8 @@ import searchGlass from "../../assets/searchGlass.png";
 
 import { getUserDiaries } from "../../services/diaryService";
 import { getRecommendedStrategies } from "../../services/hubRecommendationService";
+import { increment } from "firebase/firestore";
+import { buildEmotionProfile } from "../../services/hubRecommendationService";
 import { TAG_LABELS } from "../../domain/tagLabels";
 
 export default function CopingHub() {
@@ -69,22 +71,38 @@ export default function CopingHub() {
 
   useEffect(() => {
     async function loadRecommendations() {
-      if (!strategies.length) return;
+      if (!strategies.length || !user) return;
 
-      const diaries = await getUserDiaries(user.uid);
-      const statsMap = {};
+      try {
+        // 1️⃣ Get user diaries
+        const diaries = await getUserDiaries(user.uid);
 
-      const recs = getRecommendedStrategies({
-        strategies,
-        diaries,
-        statsMap,
-        limit: 4,
-      });
+        // 2️⃣ Load collaborative stats
+        const statsSnap = await getDocs(
+          collection(db, "strategyEmotionStats")
+        );
 
-      setRecommended(recs);
+        const statsMap = {};
+        statsSnap.forEach(doc => {
+          statsMap[doc.id] = doc.data();
+        });
+
+        // 3️⃣ Get hybrid recommendations
+        const recs = getRecommendedStrategies({
+          strategies,
+          diaries,
+          statsMap,
+          limit: 4,
+        });
+
+        setRecommended(recs);
+
+      } catch (err) {
+        console.error("Failed to load recommendations:", err);
+      }
     }
 
-    if (user) loadRecommendations();
+    loadRecommendations();
   }, [user, strategies]);
 
   useEffect(() => {
@@ -136,21 +154,60 @@ export default function CopingHub() {
       strategyId
     );
 
+    const statsRef = doc(
+      db,
+      "strategyEmotionStats",
+      strategyId
+    );
+
     try {
       const snap = await getDoc(bookmarkRef);
 
+      // 🔹 Get dominant emotion
+      const diaries = await getUserDiaries(user.uid);
+      const profile = buildEmotionProfile(diaries);
+
+      const dominantEmotion =
+        Object.entries(profile)
+          .sort((a, b) => b[1] - a[1])[0]?.[0] || null;
+
       if (snap.exists()) {
+        // ===== REMOVE BOOKMARK =====
         await deleteDoc(bookmarkRef);
-        setBookmarkedIds((prev) =>
-          prev.filter((id) => id !== strategyId)
+
+        if (dominantEmotion) {
+          await setDoc(
+            statsRef,
+            { [dominantEmotion]: increment(-1) },
+            { merge: true }
+          );
+        }
+
+        setBookmarkedIds(prev =>
+          prev.filter(id => id !== strategyId)
         );
+
       } else {
+        // ===== ADD BOOKMARK =====
         await setDoc(bookmarkRef, {
           strategyId,
+          dominantEmotion,
           createdAt: serverTimestamp(),
         });
-        setBookmarkedIds((prev) => [...prev, strategyId]);
+
+        if (dominantEmotion) {
+          await setDoc(
+            statsRef,
+            { [dominantEmotion]: increment(1) },
+            { merge: true }
+          );
+        }
+
+        setBookmarkedIds(prev =>
+          [...prev, strategyId]
+        );
       }
+
     } catch (err) {
       console.error("Toggle bookmark failed:", err);
     }

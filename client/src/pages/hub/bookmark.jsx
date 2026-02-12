@@ -3,7 +3,7 @@ import { getAuth } from "firebase/auth";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
 import { Link } from "react-router-dom";
-import { deleteDoc, doc } from "firebase/firestore";
+import { setDoc, deleteDoc, getDoc, doc, increment } from "firebase/firestore";
 import { getAllStrategies } from "../../services/adminHubService";
 import "./bookmark.css";
 
@@ -18,13 +18,45 @@ export default function Bookmark() {
     const user = auth.currentUser;
     if (!user) return;
 
-    await deleteDoc(
-      doc(db, "users", user.uid, "bookmarks", strategyId)
+    const bookmarkRef = doc(
+      db,
+      "users",
+      user.uid,
+      "bookmarks",
+      strategyId
     );
 
-    setBookmarks((prev) =>
-      prev.filter((s) => s.id !== strategyId)
+    const statsRef = doc(
+      db,
+      "strategyEmotionStats",
+      strategyId
     );
+
+    try {
+      const snap = await getDoc(bookmarkRef);
+
+      if (snap.exists()) {
+        const { dominantEmotion } = snap.data();
+
+        // Decrement collaborative stat
+        if (dominantEmotion) {
+          await setDoc(
+            statsRef,
+            { [dominantEmotion]: increment(-1) },
+            { merge: true }
+          );
+        }
+
+        await deleteDoc(bookmarkRef);
+      }
+
+      setBookmarks(prev =>
+        prev.filter(s => s.id !== strategyId)
+      );
+
+    } catch (err) {
+      console.error("Failed to remove bookmark:", err);
+    }
   };
 
   useEffect(() => {

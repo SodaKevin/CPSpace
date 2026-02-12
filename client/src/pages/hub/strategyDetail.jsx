@@ -1,6 +1,9 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getStrategyById } from "../../services/adminHubService";
+import { getUserDiaries } from "../../services/diaryService";
+import { buildEmotionProfile } from "../../services/hubRecommendationService";
+import { increment} from "firebase/firestore";
 import { TAG_LABELS } from "../../domain/tagLabels";
 import "./strategyDetail.css";
 
@@ -21,6 +24,8 @@ export default function StrategyDetail() {
 
   const [isBookmarked, setIsBookmarked] = useState(false);
   const auth = getAuth();
+
+  const statsRef = doc(db, "strategyEmotionStats", id);
 
   useEffect(() => {
     async function fetchStrategy() {
@@ -71,15 +76,51 @@ export default function StrategyDetail() {
       id
     );
 
-    if (isBookmarked) {
-      await deleteDoc(bookmarkRef);
-      setIsBookmarked(false);
-    } else {
-      await setDoc(bookmarkRef, {
-        strategyId: id,
-        createdAt: serverTimestamp(),
-      });
-      setIsBookmarked(true);
+    const statsRef = doc(db, "strategyEmotionStats", id);
+
+    try {
+      const snap = await getDoc(bookmarkRef);
+
+      const diaries = await getUserDiaries(user.uid);
+      const profile = buildEmotionProfile(diaries);
+
+      const dominantEmotion =
+        Object.entries(profile)
+          .sort((a, b) => b[1] - a[1])[0]?.[0] || null;
+
+      if (snap.exists()) {
+        await deleteDoc(bookmarkRef);
+
+        if (dominantEmotion) {
+          await setDoc(
+            statsRef,
+            { [dominantEmotion]: increment(-1) },
+            { merge: true }
+          );
+        }
+
+        setIsBookmarked(false);
+
+      } else {
+        await setDoc(bookmarkRef, {
+          strategyId: id,
+          dominantEmotion,
+          createdAt: serverTimestamp(),
+        });
+
+        if (dominantEmotion) {
+          await setDoc(
+            statsRef,
+            { [dominantEmotion]: increment(1) },
+            { merge: true }
+          );
+        }
+
+        setIsBookmarked(true);
+      }
+
+    } catch (err) {
+      console.error("Toggle bookmark failed:", err);
     }
   };
 
