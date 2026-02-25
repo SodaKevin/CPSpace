@@ -16,8 +16,9 @@
 ========================= */
 .copinghub-header {
   display: flex;
-  align-items: center;
-  padding: 12px 20px;
+  align-items: center;     /* already correct */
+  gap: 24px;               /* cleaner spacing */
+  padding: 12px 24px;
   background: var(--bg-card);
   border-bottom: 1px solid var(--border-color);
 }
@@ -32,13 +33,13 @@
   flex: 1;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 30px;
   justify-content: center;
 }
 
 .hub-search input {
   width: 100%;
-  max-width: 720px;
+  max-width: 620px;
   min-width: 280px;
   padding: 10px 14px;
   border-radius: 999px;
@@ -74,13 +75,77 @@
   width: 30px;
   height: 30px;
   object-fit: contain;
-  pointer-events: none; /* prevents image blocking button click */
+  pointer-events: none;
+}
+
+.hub-actions {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+.filter-btn {
+  margin-right: 14px;
+  padding: 8px 18px;
+
+  border-radius: 999px;
+  border: 2px solid var(--accent);
+
+  background: var(--accent);
+  color: #000000;
+
+  font-weight: 500;
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+[data-theme="dark"] .filter-btn {
+  color: #ffffff;
+}
+
+/* Hover */
+.filter-btn:hover {
+  filter: brightness(0.9);
+}
+
+.filter-panel {
+  display: flex;
+  gap: 20px;
+  padding: 16px 20px;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.filter-group select {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+}
+
+.clear-filter-btn {
+  align-self: flex-end;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  border: none;
+  cursor: pointer;
 }
 
 .bookmark-icon {
   width: 36px;
   height: 36px;
   cursor: pointer;
+  display: block;
 }
 
 [data-theme="dark"] .bookmark-icon {

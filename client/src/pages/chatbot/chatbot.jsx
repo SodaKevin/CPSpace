@@ -10,6 +10,8 @@ import {
   updateDoc,
   deleteDoc,
   serverTimestamp,
+  query,
+  orderBy
 } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
 import "./chatbot.css";
@@ -79,6 +81,8 @@ export default function Chatbot() {
         "chatbotSessions"
       );
 
+      const q = query(ref, orderBy("createdAt", "desc"));
+
       const userRef = doc(db, "users", currentUser.uid);
 
       unsubPrefs = onSnapshot(userRef, (snap) => {
@@ -97,7 +101,7 @@ export default function Chatbot() {
         }
       });
 
-      unsubSessions = onSnapshot(ref, (snap) => {
+      unsubSessions = onSnapshot(q, (snap) => {
         const loaded = snap.docs.map((d) => {
           const data = d.data();
           return {
@@ -112,11 +116,9 @@ export default function Chatbot() {
           setSessions(loaded);
         }
 
-        // 🔒 keep current session if it exists
         setActiveSessionId((prev) => {
-          if (prev && loaded.some((s) => s.id === prev)) {
-            return prev;
-          }
+          if (prev) return prev;
+
           return loaded[0]?.id || null;
         });
       });

@@ -36,6 +36,11 @@ export default function CopingHub() {
   const [loading, setLoading] = useState(true);
   const [bookmarkedIds, setBookmarkedIds] = useState([]);
 
+  // Filtering
+  const [filterOpen, setFilterOpen] = useState(false);
+  const [selectedAuthor, setSelectedAuthor] = useState("");
+  const [selectedTag, setSelectedTag] = useState("");
+
   const [user, setUser] = useState(null);
   const location = useLocation();
 
@@ -114,21 +119,39 @@ export default function CopingHub() {
     }
   }, []);
 
+  useEffect(() => {
+    if (location.state?.tag) {
+      const tag = location.state.tag;
+
+      setInputValue(TAG_LABELS[tag] || tag);
+      setSearchQuery(tag);
+
+      // Clear state so refresh won't repeat it
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
+
   const filteredStrategies = strategies.filter((strategy) => {
     const q = searchQuery.toLowerCase();
-    if (!q) return true;
-
     const title = strategy.title?.toLowerCase() || "";
     const author = strategy.author?.toLowerCase() || "";
     const description = strategy.description?.toLowerCase() || "";
     const tags = Array.isArray(strategy.tags) ? strategy.tags : [];
 
-    return (
+    const matchesSearch =
+      !q ||
       title.includes(q) ||
       author.includes(q) ||
       description.includes(q) ||
-      tags.some(tag => tag.toLowerCase().includes(q))
-    );
+      tags.some(tag => tag.toLowerCase().includes(q));
+
+    const matchesAuthor =
+      !selectedAuthor || strategy.author === selectedAuthor;
+
+    const matchesTag =
+      !selectedTag || tags.includes(selectedTag);
+
+    return matchesSearch && matchesAuthor && matchesTag;
   });
 
   const totalPages = Math.ceil(
@@ -280,15 +303,66 @@ export default function CopingHub() {
         </div>
 
         <div className="hub-actions">
-        <Link to="/coping-hub/bookmarks">
-          <img
-            src={bookmarkIcon}
-            alt="Bookmarked strategies"
-            className="bookmark-icon"
-          />
-        </Link>
+          <button
+            className="filter-btn"
+            onClick={() => setFilterOpen(prev => !prev)}
+          >
+            Filter
+          </button>
+
+          <Link to="/coping-hub/bookmarks">
+            <img
+              src={bookmarkIcon}
+              alt="Bookmarked strategies"
+              className="bookmark-icon"
+            />
+          </Link>
         </div>
       </header>
+
+      {filterOpen && (
+        <div className="filter-panel">
+          <div className="filter-group">
+            <label>Author</label>
+            <select
+              value={selectedAuthor}
+              onChange={(e) => setSelectedAuthor(e.target.value)}
+            >
+              <option value="">All</option>
+              {[...new Set(strategies.map(s => s.author))].map(author => (
+                <option key={author} value={author}>
+                  {author}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="filter-group">
+            <label>Tag</label>
+            <select
+              value={selectedTag}
+              onChange={(e) => setSelectedTag(e.target.value)}
+            >
+              <option value="">All</option>
+              {Object.keys(TAG_LABELS).map(tag => (
+                <option key={tag} value={tag}>
+                  {TAG_LABELS[tag]}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <button
+            className="clear-filter-btn"
+            onClick={() => {
+              setSelectedAuthor("");
+              setSelectedTag("");
+            }}
+          >
+            Clear Filters
+          </button>
+        </div>
+      )}
 
       {/* ===== CONTENT ===== */}
       <div className="copinghub-content">
@@ -337,7 +411,12 @@ export default function CopingHub() {
         {/* RIGHT COLUMN */}
         <main className="copinghub-right">
           <div ref={scrollTopRef} />
-        <h3>Search result: {searchQuery || "All"}</h3>
+          <h3>
+            Search result:{" "}
+            {searchQuery
+              ? TAG_LABELS[searchQuery] || searchQuery
+              : "All"}
+          </h3>
 
         {loading ? (
             <p>Loading strategies...</p>

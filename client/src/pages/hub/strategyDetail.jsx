@@ -5,6 +5,7 @@ import { getUserDiaries } from "../../services/diaryService";
 import { buildEmotionProfile } from "../../services/hubRecommendationService";
 import { increment} from "firebase/firestore";
 import { TAG_LABELS } from "../../domain/tagLabels";
+import { Link } from "react-router-dom";
 import "./strategyDetail.css";
 
 import { getAuth } from "firebase/auth";
@@ -142,9 +143,14 @@ export default function StrategyDetail() {
         <span>Author: {strategy.author}</span>
         {Array.isArray(strategy.tags) &&
           strategy.tags.map(tag => (
-            <span key={tag} className="hub-tag">
+            <Link
+              key={tag}
+              to="/coping-hub"
+              state={{ tag }}
+              className="hub-tag"
+            >
               {TAG_LABELS[tag] || tag}
-            </span>
+            </Link>
         ))}
       </div>
 
