@@ -84,22 +84,6 @@ export function getCollaborativeScore(strategy, dominantEmotion, statsMap) {
   return statsMap[strategy.id]?.[dominantEmotion] || 0;
 }
 
-export function getHybridScore(
-  strategy,
-  emotionProfile,
-  dominantEmotion,
-  statsMap
-) {
-  const contentScore = getContentScore(strategy, emotionProfile);
-  const collabScore = getCollaborativeScore(
-    strategy,
-    dominantEmotion,
-    statsMap
-  );
-
-  return (0.7 * contentScore) + (0.3 * collabScore);
-}
-
 export function getRecommendedStrategies({
   strategies,
   diaries,

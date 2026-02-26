@@ -104,7 +104,7 @@ export default function MainLayout() {
         <button
           onClick={() => signOut(auth)}
           style={{
-            marginTop: "115px",
+          marginTop: isAdmin ? "115px" : "195px", // 👈 different spacing
             padding: "0.75rem",
             background: "#ef4444",
             color: "white",
