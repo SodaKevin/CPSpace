@@ -201,7 +201,7 @@ export default function CopingHub() {
         if (dominantEmotion) {
           await setDoc(
             statsRef,
-            { [dominantEmotion]: increment(-1) },
+            { [dominantEmotion]: 0 },
             { merge: true }
           );
         }
