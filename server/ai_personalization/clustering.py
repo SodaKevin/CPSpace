@@ -22,6 +22,37 @@ def fallback_cluster(features):
         return 0   # negative cluster
     else:
         return 1   # neutral cluster
+    
+# -----------------------------
+# Hierarchical clustering
+# -----------------------------
+def hierarchical_cluster(features):
+    X = np.array(features["X"])
+
+    if len(X) < 3:
+        return fallback_cluster(features)
+
+    model = AgglomerativeClustering(n_clusters=3)
+    labels = model.fit_predict(X)
+
+    unique, counts = np.unique(labels, return_counts=True)
+    dominant_cluster = unique[np.argmax(counts)]
+
+    cluster_means = {}
+
+    for label in np.unique(labels):
+        cluster_means[label] = np.mean(X[labels == label])
+
+    sorted_labels = sorted(cluster_means, key=lambda x: cluster_means[x])
+
+    cluster_map = {
+        sorted_labels[0]: 0,
+        sorted_labels[1]: 1,
+        sorted_labels[2]: 2
+    }
+
+    return cluster_map[dominant_cluster]
+
 # -----------------------------
 # K-means clustering
 # -----------------------------
@@ -49,36 +80,6 @@ def kmeans_cluster(features):
         sorted_indices[0]: 0,  # negative
         sorted_indices[1]: 1,  # neutral
         sorted_indices[2]: 2   # positive
-    }
-
-    return cluster_map[dominant_cluster]
-
-# -----------------------------
-# Hierarchical clustering
-# -----------------------------
-def hierarchical_cluster(features):
-    X = np.array(features["X"])
-
-    if len(X) < 3:
-        return fallback_cluster(features)
-
-    model = AgglomerativeClustering(n_clusters=3)
-    labels = model.fit_predict(X)
-
-    unique, counts = np.unique(labels, return_counts=True)
-    dominant_cluster = unique[np.argmax(counts)]
-
-    cluster_means = {}
-
-    for label in np.unique(labels):
-        cluster_means[label] = np.mean(X[labels == label])
-
-    sorted_labels = sorted(cluster_means, key=lambda x: cluster_means[x])
-
-    cluster_map = {
-        sorted_labels[0]: 0,
-        sorted_labels[1]: 1,
-        sorted_labels[2]: 2
     }
 
     return cluster_map[dominant_cluster]

@@ -36,6 +36,7 @@ export default function Chatbot() {
   const [hoverRating, setHoverRating] = useState(0);
   const [feedbackText, setFeedbackText] = useState("");
   const [submittingFeedback, setSubmittingFeedback] = useState(false);
+  const [feedbackError, setFeedbackError] = useState("");
   const [displayName, setDisplayName] = useState("");
 
   const menuRef = useRef(null);
@@ -175,7 +176,7 @@ export default function Chatbot() {
   const activeSession = sessions.find((s) => s.id === activeSessionId);
 
   /* =====================
-     BACKEND CALLS (UNCHANGED)
+     BACKEND CALLS
   ====================== */
   const getAIReply = async (message, history) => {
     const res = await fetch("http://localhost:5000/api/chat", {
@@ -407,8 +408,14 @@ export default function Chatbot() {
      SUBMIT FEEDBACK (NEW, ISOLATED)
   ====================== */
   const submitFeedback = async () => {
-    if (!user || !activeSessionId || feedbackRating === 0) return;
+    if (!user || !activeSessionId) return;
 
+    if (feedbackRating === 0) {
+      setFeedbackError("Please select a rating before submitting.");
+      return;
+    }
+
+    setFeedbackError("");
     setSubmittingFeedback(true);
 
     try {
@@ -575,6 +582,12 @@ export default function Chatbot() {
                 Submit
               </button>
             </div>
+
+            {feedbackError && (
+              <p style={{ color: "red", fontSize: "14px", marginTop: "6px" }}>
+                {feedbackError}
+              </p>
+            )}
           </div>
         </div>
       )}
@@ -608,3 +621,4 @@ export default function Chatbot() {
     </div>
   );
 }
+

@@ -5,6 +5,7 @@ import { db } from "../../firebaseConfig";
 import { Link } from "react-router-dom";
 import { setDoc, deleteDoc, getDoc, doc, increment } from "firebase/firestore";
 import { getAllStrategies } from "../../services/adminHubService";
+import { TAG_LABELS } from "../../domain/tagLabels";
 import "./bookmark.css";
 
 export default function Bookmark() {
@@ -132,11 +133,12 @@ export default function Bookmark() {
 
         <p className="author">Author: {strategy.author}</p>
 
-        <span className="hub-tag">
-          {Array.isArray(strategy.tags)
-            ? strategy.tags.join(", ")
-            : ""}
-        </span>
+        {Array.isArray(strategy.tags) &&
+          strategy.tags.map(tag => (
+            <span key={tag} className="hub-tag">
+              {TAG_LABELS[tag] || tag}
+            </span>
+        ))}
 
         <p className="desc">
           {strategy.description}
