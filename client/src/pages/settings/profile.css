@@ -136,3 +136,18 @@
 .profile-edit button:hover {
   background: var(--accent-soft);
 }
+
+.edit-icon {
+  width: 14px;   /* match emoji size */
+  height: 14px;
+  display: block;
+}
+
+/* dark mode invert like bookmark */
+[data-theme="light"] .edit-icon {
+  filter: invert(1);
+}
+
+[data-theme="dark"] .edit-icon {
+  filter: invert(1);
+}

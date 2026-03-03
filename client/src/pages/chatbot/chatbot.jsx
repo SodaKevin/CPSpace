@@ -37,7 +37,6 @@ export default function Chatbot() {
   const [feedbackText, setFeedbackText] = useState("");
   const [submittingFeedback, setSubmittingFeedback] = useState(false);
   const [feedbackError, setFeedbackError] = useState("");
-  const [displayName, setDisplayName] = useState("");
 
   const menuRef = useRef(null);
   const sendingRef = useRef(false);
@@ -97,8 +96,6 @@ export default function Chatbot() {
           setChatbotTone(
             allowedTones.includes(toneFromDB) ? toneFromDB : "casual"
           );
-
-          setDisplayName(data.profileDisplayName || "there");
         }
       });
 
@@ -419,9 +416,22 @@ export default function Chatbot() {
     setSubmittingFeedback(true);
 
     try {
+      const userSnap = await getDoc(doc(db, "users", user.uid));
+
+      let username = "Anonymous";
+
+      if (userSnap.exists()) {
+        const data = userSnap.data();
+
+        if (data.username?.value) {
+          username = data.username.discriminator
+            ? `${data.username.value}#${data.username.discriminator}`
+            : data.username.value;
+        }
+      }
+
       await addDoc(collection(db, "chatbotFeedback"), {
         userId: user.uid,
-        username: displayName,
         sessionId: activeSessionId,
         rating: feedbackRating,
         description: feedbackText.trim(),
@@ -438,6 +448,13 @@ export default function Chatbot() {
     } finally {
       setSubmittingFeedback(false);
     }
+  };
+
+  const resetFeedbackState = () => {
+    setFeedbackRating(0);
+    setHoverRating(0);
+    setFeedbackText("");
+    setFeedbackError("");
   };
 
   /* =====================
@@ -460,7 +477,12 @@ export default function Chatbot() {
 
             {menuOpen && (
               <div className="chat-menu">
-                <button onClick={() => setShowFeedback(true)}>
+                <button
+                  onClick={() => {
+                    resetFeedbackState();
+                    setShowFeedback(true);
+                  }}
+                >
                   Submit Feedback
                 </button>
                 <button
@@ -573,7 +595,14 @@ export default function Chatbot() {
             />
 
             <div className="modal-actions">
-              <button onClick={() => setShowFeedback(false)}>Cancel</button>
+              <button
+                onClick={() => {
+                  resetFeedbackState();
+                  setShowFeedback(false);
+                }}
+              >
+                Cancel
+              </button>
               <button
                 className="primary"
                 onClick={submitFeedback}

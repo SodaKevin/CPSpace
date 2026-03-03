@@ -5,6 +5,8 @@ import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { db, storage } from "../../firebaseConfig";
 import "./profile.css";
 
+import editIcon from "../../assets/editIcon.png";
+
 export default function Profile() {
   const auth = getAuth();
   const fileInputRef = useRef();
@@ -261,7 +263,9 @@ export default function Profile() {
                   <button onClick={cancelEdit} disabled={saving}>Cancel</button>
                 </>
               ) : (
-                <button className="edit-btn" onClick={() => startEdit("name")}>✏️</button>
+                <button className="edit-btn" onClick={() => startEdit("name")}>
+                  <img src={editIcon} alt="Edit" className="edit-icon" />
+                </button>
               )}
             </div>
           </div>
@@ -293,8 +297,8 @@ export default function Profile() {
                   <button onClick={cancelEdit} disabled={saving}>Cancel</button>
                 </>
               ) : (
-                <button className="edit-btn" onClick={() => startEdit("username")}>
-                  ✏️
+                <button className="edit-btn" onClick={() => startEdit("name")}>
+                  <img src={editIcon} alt="Edit" className="edit-icon" />
                 </button>
               )}
             </div>
@@ -329,7 +333,9 @@ export default function Profile() {
                   <button onClick={cancelEdit} disabled={saving}>Cancel</button>
                 </>
               ) : (
-                <button className="edit-btn" onClick={() => startEdit("age")}>✏️</button>
+                <button className="edit-btn" onClick={() => startEdit("name")}>
+                  <img src={editIcon} alt="Edit" className="edit-icon" />
+                </button>
               )}
             </div>
           </div>
@@ -359,7 +365,9 @@ export default function Profile() {
                   <button onClick={cancelEdit} disabled={saving}>Cancel</button>
                 </>
               ) : (
-                <button className="edit-btn" onClick={() => startEdit("gender")}>✏️</button>
+                <button className="edit-btn" onClick={() => startEdit("name")}>
+                  <img src={editIcon} alt="Edit" className="edit-icon" />
+                </button>
               )}
             </div>
           </div>

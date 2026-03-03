@@ -314,7 +314,7 @@
 
   font-size: 22px;
   line-height: 1;
-  color: #ffffff;
+  color: var(--text-main);;
 }
 
 .bookmark.active {

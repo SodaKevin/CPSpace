@@ -1,16 +1,14 @@
 .page-wrapper {
-  display: flex;
-  justify-content: center;
-  padding: 40px 24px;
+  padding-left: 24px;
+  padding-right: 76px;
 }
 
 .assessment-panel {
   width: 100%;
-  max-width: 900px;
-  background: var(--bg-card);
-  padding: 32px;
-  border-radius: 12px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+  left: 8px;
 }
 
 /* Existing styles */
