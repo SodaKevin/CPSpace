@@ -6,56 +6,206 @@ import {
   where,
   orderBy,
   limit,
-  startAfter,
   getDocs
 } from "firebase/firestore";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getAuth } from "firebase/auth";
 import { db } from "../../../firebaseConfig";
 
-const PAGE_SIZE = 5;
+const PAGE_SIZE = 20;
+const FETCH_SIZE = 100;
 
-export function usePosts() {
+/* ---------- HOT SCORE ---------- */
+
+function wilsonLowerBound(up, down) {
+  const n = up + down;
+  if (n === 0) return 0;
+
+  const z = 1.96;
+  const phat = up / n;
+
+  return (
+    (phat + (z * z) / (2 * n) -
+      z * Math.sqrt((phat * (1 - phat) + (z * z) / (4 * n)) / n)) /
+    (1 + (z * z) / n)
+  );
+}
+
+function computeHotScore(post) {
+  const up = post.stats?.up || 0;
+  const down = post.stats?.down || 0;
+
+  const wilson = wilsonLowerBound(up, down);
+
+  const createdAt = post.createdAt?.toDate?.();
+  if (!createdAt) return wilson;
+
+  const ageHours =
+    (Date.now() - createdAt.getTime()) / (1000 * 60 * 60);
+
+  return wilson / (1 + ageHours / 8);
+}
+
+/* ---------- HELPER: CHUNK ARRAY ---------- */
+
+function chunkArray(arr, size) {
+  const chunks = [];
+  for (let i = 0; i < arr.length; i += size) {
+    chunks.push(arr.slice(i, i + size));
+  }
+  return chunks;
+}
+
+/* ---------- HOOK ---------- */
+
+export function usePosts(mode = "newest") {
+  const [allPosts, setAllPosts] = useState([]);
   const [posts, setPosts] = useState([]);
-  const [lastDoc, setLastDoc] = useState(null);
+  const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
 
-  const loadInitial = async () => {
-    setLoading(true);
+  const auth = getAuth();
+  const currentUid = auth.currentUser?.uid;
 
-    const q = query(
-      collection(db, "posts"),
-      where("moderationStatus", "in", ["Visible", "Flagged"]),
-      orderBy("createdAt", "desc"),
-      limit(PAGE_SIZE)
+  /* ---------- LOAD BLOCKED + CONSENTED ---------- */
+
+  async function fetchRelationshipData() {
+    if (!currentUid) return { blocked: new Set(), consented: [] };
+
+    const convoQuery = query(
+      collection(db, "conversations"),
+      where("participants", "array-contains", currentUid)
     );
 
-    const snap = await getDocs(q);
+    const snap = await getDocs(convoQuery);
 
-    setPosts(snap.docs.map(d => ({ id: d.id, ...d.data() })));
-    setLastDoc(snap.docs[snap.docs.length - 1]);
+    const blocked = new Set();
+    const consented = [];
+
+    snap.docs.forEach(d => {
+      const data = d.data();
+      const other = data.participants.find(p => p !== currentUid);
+
+      if (!other) return;
+
+      if (data.relationshipStatus === "blocked") {
+        blocked.add(other);
+      }
+
+      if (data.relationshipStatus === "consented") {
+        consented.push(other);
+      }
+    });
+
+    return { blocked, consented };
+  }
+
+  /* ---------- INITIAL LOAD ---------- */
+
+  const loadInitial = async () => {
+    if (!currentUid) return;
+
+    setLoading(true);
+
+    const { blocked, consented } =
+      await fetchRelationshipData();
+
+    let data = [];
+
+    /* ---------- RELEVANT MODE ---------- */
+
+    if (mode === "relevant") {
+      if (consented.length === 0) {
+        setAllPosts([]);
+        setPosts([]);
+        setHasMore(false);
+        setLoading(false);
+        return;
+      }
+
+      const chunks = chunkArray(consented, 10);
+      const results = [];
+
+      for (const chunk of chunks) {
+        const q = query(
+          collection(db, "posts"),
+          where("authorId", "in", chunk),
+          where("moderationStatus", "in", ["Visible", "Flagged"]),
+          orderBy("createdAt", "desc"),
+          limit(FETCH_SIZE)
+        );
+
+        const snap = await getDocs(q);
+        snap.docs.forEach(d =>
+          results.push({ id: d.id, ...d.data() })
+        );
+      }
+
+      data = results
+        .map(p => ({ ...p, _score: computeHotScore(p) }))
+        .sort((a, b) => b._score - a._score);
+    }
+
+    /* ---------- NEWEST / HOT ---------- */
+
+    else {
+      const q = query(
+        collection(db, "posts"),
+        where("moderationStatus", "in", ["Visible", "Flagged"]),
+        orderBy("createdAt", "desc"),
+        limit(FETCH_SIZE)
+      );
+
+      const snap = await getDocs(q);
+
+      data = snap.docs.map(d => ({
+        id: d.id,
+        ...d.data()
+      }));
+
+      // filter blocked authors
+      data = data.filter(p => !blocked.has(p.authorId));
+
+      if (mode === "hot") {
+        data = data
+          .map(p => ({ ...p, _score: computeHotScore(p) }))
+          .sort((a, b) => b._score - a._score);
+      }
+    }
+
+    setAllPosts(data);
+    setPosts(data.slice(0, PAGE_SIZE));
+    setPage(1);
+    setHasMore(data.length > PAGE_SIZE);
     setLoading(false);
   };
 
-  const loadMore = async () => {
-    if (!lastDoc) return;
+  /* ---------- LOAD MORE ---------- */
 
-    const q = query(
-      collection(db, "posts"),
-      where("moderationStatus", "in", ["Visible", "Flagged"]),
-      orderBy("createdAt", "desc"),
-      startAfter(lastDoc),
-      limit(PAGE_SIZE)
-    );
+  const loadMore = () => {
+    if (loading || !hasMore) return;
 
-    const snap = await getDocs(q);
+    setPage(p => {
+      const next = p + 1;
+      const nextPosts = allPosts.slice(0, next * PAGE_SIZE);
 
-    setPosts(prev => [
-      ...prev,
-      ...snap.docs.map(d => ({ id: d.id, ...d.data() }))
-    ]);
+      setPosts(nextPosts);
+      setHasMore(nextPosts.length < allPosts.length);
 
-    setLastDoc(snap.docs[snap.docs.length - 1]);
+      return next;
+    });
   };
 
-  return { posts, loadInitial, loadMore, loading };
+  useEffect(() => {
+    loadInitial();
+  }, [mode, currentUid]);
+
+  return {
+    posts,
+    loadInitial,
+    loadMore,
+    loading,
+    hasMore
+  };
 }

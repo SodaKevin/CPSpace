@@ -89,22 +89,28 @@ export default function MainLayout() {
           <NavLink to="/settings" className="main-link">Settings</NavLink>
 
           {isAdmin && (
-            <>
-              <NavLink to="/admin/strategies" className="main-link">
-                Manage Strategies
-              </NavLink>
+            <NavLink to="/admin/strategies" className="main-link">
+              Manage Strategies
+            </NavLink>
+          )}
 
-              <NavLink to="/admin/chatbot-feedback" className="main-link">
-                Chatbot Feedback
-              </NavLink>
-            </>
+          {isAdmin && (
+            <NavLink to="/admin/moderation" className="main-link">
+              Moderation Panel
+            </NavLink>
+          )}
+
+          {isAdmin && (
+            <NavLink to="/admin/chatbot-feedback" className="main-link">
+              Chatbot Feedback
+            </NavLink>
           )}
         </nav>
 
         <button
           onClick={() => signOut(auth)}
           style={{
-          marginTop: isAdmin ? "115px" : "225px", // 👈 different spacing
+          marginTop: isAdmin ? "70px" : "225px", // 👈 different spacing
             padding: "0.75rem",
             background: "#ef4444",
             color: "white",

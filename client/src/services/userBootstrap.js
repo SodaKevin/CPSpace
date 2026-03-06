@@ -73,7 +73,7 @@ export async function bootstrapUser(firebaseUid) {
         theme: "light",
         colorPalette: "default",
         chatbotTone: "default",
-        autoPersonalisation: true,
+        autoPersonalisation: false,
         revealToFamiliarity: true,
         notifyOnConsent: true,
         enableDMRequests: true,

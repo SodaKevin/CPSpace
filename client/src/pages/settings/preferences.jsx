@@ -62,8 +62,22 @@ export default function Preferences() {
       const ref = doc(db, "users", user.uid);
       const snap = await getDoc(ref);
 
-      const data = snap.exists() ? snap.data().preferences : {};
+      let data = {};
+
+      if (snap.exists()) {
+        data = snap.data().preferences || {};
+      }
+
       const merged = { ...DEFAULT_PREFS, ...data };
+
+      // if preferences didn't exist before, save defaults
+      if (!snap.data()?.preferences) {
+        await setDoc(
+          doc(db, "users", user.uid),
+          { preferences: DEFAULT_PREFS },
+          { merge: true }
+        );
+      }
 
       setPrefs(merged);
       applyTheme(merged.themeMode);
@@ -129,7 +143,7 @@ export default function Preferences() {
     await savePrefs(newPrefs);
   }
 
-  if (!prefs) return <p>Loading preferences...</p>;
+  if (!prefs) return null;
 
   return (
     <div className="personalization-panel">
@@ -194,7 +208,7 @@ export default function Preferences() {
             className="color-slider"
             style={{
               transform: `translateX(${
-                Object.keys(COLOR_MAP).indexOf(prefs.colorPalette) * 52
+                Math.max(0, Object.keys(COLOR_MAP).indexOf(prefs.colorPalette)) * 52
               }px) scale(1.15)`
             }}
           />

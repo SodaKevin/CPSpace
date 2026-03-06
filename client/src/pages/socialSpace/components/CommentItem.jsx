@@ -1,13 +1,16 @@
 // socialSpace/components/CommentItem.jsx
 
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { getAuth } from "firebase/auth";
 import { doc, updateDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "../../../firebaseConfig";
 import "./Comment.css";
+import { timeAgo } from "../../../utils/timeAgo";
 
 export default function CommentItem({ comment, pseudonym }) {
   const auth = getAuth();
+  const navigate = useNavigate();
   const isOwner = auth.currentUser?.uid === comment.authorId;
 
   const [editing, setEditing] = useState(false);
@@ -39,10 +42,30 @@ export default function CommentItem({ comment, pseudonym }) {
     );
   };
 
+  async function reportComment() {
+    if (!window.confirm("Report this comment?")) return;
+
+    await updateDoc(
+      doc(db, "posts", comment.postId, "comments", comment.id),
+      {
+        moderationStatus: "Flagged",
+        updatedAt: serverTimestamp()
+      }
+    );
+
+    alert("Comment submitted for review.");
+  }
+
   return (
     <div className="comment">
-      <span className="comment-author">
+      <span className="comment-author"
+        onClick={() =>
+          navigate(`/user/${comment.authorId}`)
+        }
+        style={{ cursor: "pointer" }}
+      >
         {pseudonym}
+        {comment.createdAt && ` · ${timeAgo(comment.createdAt)}`}
         {comment.isEdited && " · edited"}
       </span>
 
@@ -61,6 +84,10 @@ export default function CommentItem({ comment, pseudonym }) {
           <button onClick={remove}>Delete</button>
         </div>
       )}
+
+      <div className="comment-actions">
+        <button onClick={reportComment}>Report</button>
+      </div>
     </div>
   );
 }

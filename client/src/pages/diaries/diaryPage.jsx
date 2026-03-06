@@ -7,7 +7,12 @@ import { getAuth } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
-import { getMonthLabel, getWeekDates } from "./utils/dateUtils";
+import { getMonthLabel, getWeekDates, getLocalDateParts } from "./utils/dateUtils";
+import { computeDailyScores } from "./utils/emotionAggregation";
+import { build7DayTrend } from "./utils/trendBuilder";
+import { saveWindowToCache, loadWindowFromCache, } from "./utils/diaryCache";
+
+import EmotionTrendChart from "./components/EmotionTrendChart";
 
 import EventItem from "./EventItem";
 import DiaryEmotionModal from "./DiaryEmotionModal";
@@ -108,6 +113,24 @@ export default function DiaryPage() {
   const [editingEvent, setEditingEvent] = useState(null);
   const [showEditEventModal, setShowEditEventModal] = useState(false);
   
+  const { dateKey: activeDateKey } = getLocalDateParts(activeDate);
+
+  const todaysEmotionDiaries = emotionDiaries.filter(
+    d => d.dateKey === activeDateKey
+  );
+
+  const todaysReflectionDiaries = reflectionDiaries.filter(
+    d => d.dateKey === activeDateKey
+  );
+
+  const mergedEntries = [
+    ...emotionDiaries,
+    ...reflectionDiaries,
+  ];
+
+  const dailyScores = computeDailyScores(mergedEntries);
+  const trendData = build7DayTrend(dailyScores, activeDate);
+
   const {
     loadEvents,
     createEvent,
@@ -234,9 +257,23 @@ export default function DiaryPage() {
 
   // reloading (relaod)
   async function reloadEmotionLogs() {
-    const list = await loadEmotionLogs();
-    list.sort((a, b) => a.createdAt.seconds - b.createdAt.seconds);
-    setEmotionDiaries(list);
+    const cacheKey = `window-${activeDateKey}`;
+
+    try {
+      const list = await loadEmotionLogs();
+      list.sort((a, b) => a.createdAt.seconds - b.createdAt.seconds);
+
+      setEmotionDiaries(list);
+
+      await saveWindowToCache(cacheKey + "-emotion", list);
+    } catch (err) {
+      console.warn("Firestore failed, using cache", err);
+
+      const cached = await loadWindowFromCache(cacheKey + "-emotion");
+      if (cached) {
+        setEmotionDiaries(cached);
+      }
+    }
   }
 
   async function reloadReflections() {
@@ -277,11 +314,13 @@ export default function DiaryPage() {
                 })
               }
             >
-              &lt; {getMonthLabel(activeDate)}
+              {getMonthLabel(activeDate)}
             </button>
+
             <button onClick={() => setShowEmotionModal(true)}>
               Today’s Emotion +
             </button>
+
             <button
               onClick={() => {
                 setIsReflectionMode(true);
@@ -289,6 +328,12 @@ export default function DiaryPage() {
               }}
             >
               Diary +
+            </button>
+
+            <button
+              onClick={() => navigate("/diaries/manage-feelings")}
+            >
+              Manage Feelings
             </button>
           </div>
 
@@ -325,7 +370,7 @@ export default function DiaryPage() {
           <>
             {/* TOP: Emotion-only diaries */}
             <div className="diary-entry">
-              {emotionDiaries.length === 0 ? (
+              {todaysEmotionDiaries.length === 0 ? (
                 <div className="diary-placeholder">
                   You haven’t recorded today’s emotion yet.
                   <br />
@@ -334,7 +379,12 @@ export default function DiaryPage() {
               ) : (
                 <div className="diary-meta">
 
-                  {filteredEmotionDiaries.map((entry) => (
+                  {(activeCategory === "all"
+                    ? todaysEmotionDiaries
+                    : todaysEmotionDiaries.filter(
+                        (d) => d.category === activeCategory
+                      )
+                  ).map((entry) => (
                     <div key={entry.id} className="emotion-bubble">
                       <span className="emotion-time">
                         {formatTime(entry.createdAt)}
@@ -368,7 +418,7 @@ export default function DiaryPage() {
 
             {/* BOTTOM: Reflection diaries */}
             <div className="diary-entry" style={{ marginTop: "32px" }}>
-              {reflectionDiaries.length === 0 ? (
+              {todaysReflectionDiaries.length === 0 ? (
                 <div className="diary-placeholder">
                   You haven’t written a diary yet.
                   <br />
@@ -376,7 +426,7 @@ export default function DiaryPage() {
                 </div>
               ) : (
 
-                reflectionDiaries.map((entry) => (
+                todaysReflectionDiaries.map((entry) => (
                   <div key={entry.id} className="diary-card">
                     <div className="diary-time-title">
                       {formatTime(entry.createdAt)}
@@ -410,6 +460,9 @@ export default function DiaryPage() {
                 ))
               )}
             </div>
+
+            <EmotionTrendChart trendData={trendData} />
+
           </>
         )}
 

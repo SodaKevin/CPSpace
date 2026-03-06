@@ -46,9 +46,17 @@ import EditStrategy from "./pages/hub/adminHub/editStrategy";
 // Diary
 import DiaryPage from "./pages/diaries/diaryPage";
 import CalendarPage from "./pages/diaries/CalendarPage";
+import ManageFeelings from "./pages/diaries/components/ManageFeelings";
 
 // Social Space
 import SocialSpace from "./pages/socialSpace/SocialSpace";
+import UserProfilePage from "./pages/socialSpace/UserProfilePage";
+
+// DM Chat
+import DMPage from "./pages/DMconvo/DMPage";
+
+// Moderation
+import ModerationPage from "./pages/hub/adminHub/ModerationPage";
 
 function App() {
   const auth = getAuth();
@@ -214,11 +222,19 @@ function App() {
 
           {/* DIARY */}
           <Route path="diary" element={<DiaryPage />} />
+          <Route
+            path="diaries/manage-feelings"
+            element={<ManageFeelings />}
+          />
           {/* CALENDAR */}
           <Route path="calendar" element={<CalendarPage />} />
 
           {/* SOCIAL SPACE */}
           <Route path="social-space" element={<SocialSpace />} />
+          <Route path="/user/:uid" element={<UserProfilePage />} />
+
+          {/* DM CHAT */}
+          <Route path="chats" element={<DMPage />} />
 
           {/* CHATBOT */}
           <Route path="chatbot" element={<Chatbot />} />
@@ -228,7 +244,7 @@ function App() {
           />
           <Route
             path="/admin/chatbot-feedback/:id"
-            element={<FeedbackDetail />}
+            element={isAdmin ? <FeedbackDetail /> : <Navigate to="/chatbot" />}
           />
 
           {/* COPING HUB */}
@@ -246,6 +262,10 @@ function App() {
           <Route
             path="/admin/strategies"
             element={isAdmin ? <StrategyList /> : <Navigate to="/coping-hub" />}
+          />
+          <Route
+            path="/admin/moderation"
+            element={isAdmin ? <ModerationPage /> : <Navigate to="/coping-hub" />}
           />
 
           {/* ASSESSMENTS */}

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import {
   getStrategyById,
   updateStrategy,
@@ -12,6 +12,9 @@ import "./strategyLayout.css";
 export default function EditStrategy() {
   const { id } = useParams();
   const navigate = useNavigate();
+  
+  const [searchParams] = useSearchParams();
+  const page = searchParams.get("page") || 1;
 
   const [loading, setLoading] = useState(true);
 
@@ -37,7 +40,7 @@ export default function EditStrategy() {
       try {
         const data = await getStrategyById(id);
         if (!data) {
-          navigate("/admin/strategies");
+        navigate(`/admin/strategies?page=${page}`, { replace: true });
           return;
         }
 
@@ -138,7 +141,7 @@ async function handleSubmit(e) {
 
     try {
       await updateStrategy(id, payload);
-      navigate("/admin/strategies");
+      navigate(`/admin/strategies?page=${page}`, { replace: true });
     } catch (err) {
       console.error("Failed to update strategy:", err);
     }
@@ -339,7 +342,7 @@ async function handleSubmit(e) {
           <button
             type="button"
             className="secondary"
-            onClick={() => navigate("/admin/strategies")}
+            onClick={() => navigate(`/admin/strategies?page=${page}`)}
           >
             Cancel
           </button>

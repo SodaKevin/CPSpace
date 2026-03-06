@@ -3,15 +3,16 @@
 import { useComments } from "../hooks/useComments";
 import CommentItem from "./CommentItem";
 import "./Comment.css";
-import { usePublicPseudonyms } from "../hooks/usePublicPseudonyms";
+import { useDisplayNames } from "../hooks/useDisplayNames";
 
 export default function CommentList({ postId, expanded }) {
   const comments = useComments(postId);
-  const pseudonymMap = usePublicPseudonyms();
 
   const visibleComments = expanded
     ? comments
-    : comments.slice(0, 2); // latest 1–2
+    : comments.slice(0, 2);
+
+  const displayNameMap = useDisplayNames(visibleComments);
 
   if (visibleComments.length === 0) return null;
 
@@ -21,7 +22,7 @@ export default function CommentList({ postId, expanded }) {
         <CommentItem
           key={c.id}
           comment={c}
-          pseudonym={pseudonymMap[c.authorId] || "Anonymous"}
+          pseudonym={displayNameMap[c.authorId] || "Anonymous"}
         />
       ))}
     </div>

@@ -2,7 +2,7 @@
 // User-facing, read-only Coping Strategy Hub
 
 import "./copingHub.css";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useSearchParams } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
 import { getAllStrategies } from "../../services/adminHubService";
 import { getAuth } from "firebase/auth";
@@ -45,7 +45,12 @@ export default function CopingHub() {
   const location = useLocation();
 
   const ITEMS_PER_PAGE = 10;
-  const [currentPage, setCurrentPage] = useState(1);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const currentPage = Number(searchParams.get("page") || 1);
+
+  const setCurrentPage = (page) => {
+    setSearchParams({ page });
+  };
   const scrollTopRef = useRef(null);
 
   function handleTagClick(tag) {
@@ -484,7 +489,7 @@ export default function CopingHub() {
               disabled={currentPage === 1}
               onClick={(e) => {
                 e.currentTarget.blur();
-                setCurrentPage(p => p - 1);
+                setCurrentPage(currentPage - 1);
               }}
             >
               ‹
@@ -512,7 +517,7 @@ export default function CopingHub() {
               disabled={currentPage === totalPages}
               onClick={(e) => {
                 e.currentTarget.blur();
-                setCurrentPage(p => p + 1);
+                setCurrentPage(currentPage + 1);
               }}
             >
               ›

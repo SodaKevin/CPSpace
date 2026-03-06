@@ -19,9 +19,17 @@ export function useReflections(user, activeDate) {
   async function loadReflections() {
     if (!user) return [];
 
+    const { dateKey: endKey } = getLocalDateParts(activeDate);
+
+    const startDate = new Date(activeDate);
+    startDate.setDate(startDate.getDate() - 10);
+
+    const { dateKey: startKey } = getLocalDateParts(startDate);
+
     const q = query(
       collection(db, "users", user.uid, "diaries"),
-      where("dateKey", "==", getDateKey())
+      where("dateKey", ">=", startKey),
+      where("dateKey", "<=", endKey)
     );
 
     const snap = await getDocs(q);

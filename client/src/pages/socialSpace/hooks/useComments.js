@@ -12,7 +12,7 @@ export function useComments(postId) {
 
     const q = query(
       collection(db, "posts", postId, "comments"),
-      where("moderationStatus", "==", "Visible"),
+      where("moderationStatus", "in", ["Visible", "Flagged"]),
       orderBy("createdAt", "desc")
     );
 
@@ -20,7 +20,7 @@ export function useComments(postId) {
       setComments(
         snap.docs.map(d => ({
           id: d.id,
-          postId,            // 🔥 THIS FIXES EVERYTHING
+          postId,
           ...d.data()
         }))
       );

@@ -1,25 +1,34 @@
 // socialSpace/components/PostCard.jsx
 
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { getAuth } from "firebase/auth";
 import {
   doc,
   updateDoc,
   serverTimestamp,
   getDoc,
-  runTransaction,
-  collection,
-  setDoc
+  runTransaction
 } from "firebase/firestore";
 import { db } from "../../../firebaseConfig";
+import { timeAgo } from "../../../utils/timeAgo";
 
 import CommentList from "./CommentList";
 import CommentInput from "./CommentInput";
 import "./PostCard.css";
 
-export default function PostCard({ post, pseudonym, onPostUpdated }) {
+const EMPTY_FEELINGS = { pos: [], neu: [], neg: [] };
+
+export default function PostCard({
+  post,
+  pseudonym,
+  onPostUpdated,
+  loadMore
+}) {
   const auth = getAuth();
-  const isOwner = auth.currentUser?.uid === post.authorId;
+  const uid = auth.currentUser?.uid;
+  const navigate = useNavigate();
+  const isOwner = uid === post.authorId;
 
   const [showAllComments, setShowAllComments] = useState(false);
 
@@ -98,6 +107,7 @@ export default function PostCard({ post, pseudonym, onPostUpdated }) {
     } else {
       applyVote(1);
     }
+    if (loadMore) loadMore();
   }
 
   function handleDownvote() {
@@ -106,10 +116,22 @@ export default function PostCard({ post, pseudonym, onPostUpdated }) {
     } else {
       applyVote(-1);
     }
+    if (loadMore) loadMore();
+  }
+
+  async function handleReport() {
+    if (!window.confirm("Report this post?")) return;
+
+    await updateDoc(doc(db, "posts", post.id), {
+      moderationStatus: "Flagged",
+      updatedAt: serverTimestamp()
+    });
+
+    alert("Post submitted for review.");
   }
 
   useEffect(() => {
-    if (!auth.currentUser) return;
+    if (!uid) return;
 
     async function loadMyVote() {
       const voteRef = doc(
@@ -117,7 +139,7 @@ export default function PostCard({ post, pseudonym, onPostUpdated }) {
         "posts",
         post.id,
         "votes",
-        auth.currentUser.uid
+        uid
       );
 
       const snap = await getDoc(voteRef);
@@ -130,7 +152,7 @@ export default function PostCard({ post, pseudonym, onPostUpdated }) {
     }
 
     loadMyVote();
-  }, [post.id]);
+  }, [post.id, uid]);
 
   // map stored category → internal key
   function toKey(cat) {
@@ -151,7 +173,7 @@ export default function PostCard({ post, pseudonym, onPostUpdated }) {
 
   const [category, setCategory] = useState(toKey(post.emotionCategory));
   const [selected, setSelected] = useState(post.feelings || []);
-  const [allFeelings, setAllFeelings] = useState({ pos: [], neu: [], neg: [] });
+  const [allFeelings, setAllFeelings] = useState(EMPTY_FEELINGS);
 
   const savePost = async () => {
     await updateDoc(doc(db, "posts", post.id), {
@@ -177,18 +199,59 @@ export default function PostCard({ post, pseudonym, onPostUpdated }) {
 
   useEffect(() => {
     async function loadFeelings() {
-      const snap = await getDoc(doc(db, "defaultFeelings", "default"));
-      if (snap.exists()) {
-        setAllFeelings(snap.data());
-      }
+      const [defaultSnap, userSnap] = await Promise.all([
+        getDoc(doc(db, "defaultFeelings", "default")),
+        uid ? getDoc(doc(db, "users", uid)) : Promise.resolve(null),
+      ]);
+
+      const defaults = defaultSnap.exists()
+        ? {
+            pos: defaultSnap.data()?.pos ?? [],
+            neu: defaultSnap.data()?.neu ?? [],
+            neg: defaultSnap.data()?.neg ?? [],
+          }
+        : EMPTY_FEELINGS;
+
+      const preferenceFeelings = userSnap?.exists()
+        ? userSnap.data()?.preferences?.feelings
+        : null;
+
+      const added = {
+        pos: preferenceFeelings?.added?.pos ?? [],
+        neu: preferenceFeelings?.added?.neu ?? [],
+        neg: preferenceFeelings?.added?.neg ?? [],
+      };
+
+      const removed = {
+        pos: preferenceFeelings?.removed?.pos ?? [],
+        neu: preferenceFeelings?.removed?.neu ?? [],
+        neg: preferenceFeelings?.removed?.neg ?? [],
+      };
+
+      setAllFeelings({
+        pos: defaults.pos.filter((f) => !removed.pos.includes(f)).concat(added.pos),
+        neu: defaults.neu.filter((f) => !removed.neu.includes(f)).concat(added.neu),
+        neg: defaults.neg.filter((f) => !removed.neg.includes(f)).concat(added.neg),
+      });
     }
+
     loadFeelings();
-  }, []);
+  }, [uid]);
 
   return (
     <div className="post-card">
       <div className="post-header">
-        <strong>{pseudonym}</strong>
+        <strong
+          onClick={() => navigate(`/user/${post.authorId}`)}
+          style={{ cursor: "pointer" }}
+        >
+          {pseudonym}
+        </strong>
+
+        <span className="post-time">
+          · {timeAgo(post.createdAt)}
+        </span>
+
         {post.isEdited && <span className="edited-label"> · edited</span>}
       </div>
 
@@ -212,7 +275,7 @@ export default function PostCard({ post, pseudonym, onPostUpdated }) {
 
           {/* FEELINGS */}
           <div className="feelings">
-            {allFeelings[category]?.map(f => (
+            {[...(allFeelings[category] ?? []), ...selected.filter((f) => !(allFeelings[category] ?? []).includes(f))].map(f => (
               <span
                 key={f}
                 className={selected.includes(f) ? "tag active" : "tag"}
@@ -261,13 +324,25 @@ export default function PostCard({ post, pseudonym, onPostUpdated }) {
         </button>
 
         <button
-          onClick={() => setShowAllComments(v => !v)}
+          onClick={() => {
+            setShowAllComments(v => !v);
+            if (loadMore) loadMore();
+          }}
           style={{
             color: showAllComments ? "var(--accent)" : undefined
           }}
         >
           💬 Comment
         </button>
+
+        <button onClick={handleReport}>
+          🚩 Report
+        </button>
+
+        {/* Emotion category display */}
+        <span className={`emotion-badge ${post.emotionCategory}`}>
+          {post.emotionCategory}
+        </span>
       </div>
 
       <CommentList
