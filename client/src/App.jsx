@@ -33,6 +33,7 @@ import AssessmentHistory from "./pages/assessments/history";
 // Chatbot
 import Chatbot from "./pages/chatbot/chatbot";
 import ChatbotFeedback from "./pages/admin/chatbotFeedback";
+import FeedbackDetail from "./pages/admin/feedbackDetail";
 
 // Coping hub
 import CopingHub from "./pages/hub/copingHub";
@@ -224,6 +225,10 @@ function App() {
           <Route
             path="/admin/chatbot-feedback"
             element={isAdmin ? <ChatbotFeedback /> : <Navigate to="/chatbot" />}
+          />
+          <Route
+            path="/admin/chatbot-feedback/:id"
+            element={<FeedbackDetail />}
           />
 
           {/* COPING HUB */}

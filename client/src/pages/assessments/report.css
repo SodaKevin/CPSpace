@@ -95,3 +95,39 @@
   background: var(--accent);
   color: #fff;
 }
+
+@media print {
+  body {
+    margin: 0;
+  }
+
+  body * {
+    visibility: hidden;
+  }
+
+  .report,
+  .report * {
+    visibility: visible;
+  }
+
+  .report {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    max-width: 760px;
+    margin: 0;
+    padding: 10px 0 10px 0;
+  }
+
+  .report-actions {
+    display: none;
+  }
+
+  /* hide unwanted parts */
+  .assessment-intro,
+  .report-note,
+  .recommendations {
+    display: none;
+  }
+}

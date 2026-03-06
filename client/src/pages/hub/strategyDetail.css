@@ -152,6 +152,12 @@
   align-items: center;
 }
 
+.strategy-divider {
+  border: none;
+  border-top: 2px solid var(--border-color);
+  margin: 28px 0;
+}
+
 /* ERROR */
 .strategy-not-found {
   padding: 32px;

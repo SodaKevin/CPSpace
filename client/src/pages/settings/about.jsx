@@ -22,7 +22,7 @@ export default function About() {
             healthier coping habits over time.
         </p>
 
-      <h4>Project Objectives</h4>
+      <h4>Objectives</h4>
 
         <p>
             The primary objective of CPSpace is to promote emotional self-awareness

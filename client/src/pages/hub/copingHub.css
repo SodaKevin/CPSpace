@@ -171,6 +171,14 @@
   border-right: 1px solid var(--border-color);
 }
 
+.recommendation-note {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 4px;
+  margin-bottom: 14px;
+  line-height: 1.4;
+}
+
 .strategy-card {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
@@ -274,6 +282,10 @@
   border-bottom: 1px solid var(--border-color);
 }
 
+.result-card a {
+  color: var(--text-main);
+}
+
 .result-card h4 {
   margin-top: 5px;
 
@@ -312,7 +324,7 @@
   border: none;
   cursor: pointer;
 
-  font-size: 22px;
+  font-size: 28px;
   line-height: 1;
   color: var(--text-main);;
 }

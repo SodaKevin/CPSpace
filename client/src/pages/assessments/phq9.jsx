@@ -74,6 +74,7 @@ export default function PHQ9() {
         collection(db, "users", user.uid, "assessments"),
         {
           type: "PHQ-9",
+          answers,
           score,
           severity,
           createdAt: serverTimestamp(),
@@ -86,6 +87,7 @@ export default function PHQ9() {
           type: "PHQ-9",
           score,
           severity,
+          answers
         },
       });
     } catch (err) {

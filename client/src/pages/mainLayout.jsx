@@ -104,7 +104,7 @@ export default function MainLayout() {
         <button
           onClick={() => signOut(auth)}
           style={{
-          marginTop: isAdmin ? "115px" : "195px", // 👈 different spacing
+          marginTop: isAdmin ? "115px" : "225px", // 👈 different spacing
             padding: "0.75rem",
             background: "#ef4444",
             color: "white",
@@ -126,8 +126,13 @@ export default function MainLayout() {
               referrerPolicy="no-referrer"
             />
             <span>
-              {userData.profileDisplayName ||
-                `${userData.username?.value}#${userData.username?.discriminator}`}
+              {userData.profileDisplayName?.trim()
+                ? userData.profileDisplayName
+                : `${userData.username?.value}${
+                    userData.username?.discriminator
+                      ? `#${userData.username.discriminator}`
+                      : ""
+                  }`}
             </span>
           </div>
         )}

@@ -329,7 +329,7 @@ export default function CopingHub() {
               onChange={(e) => setSelectedAuthor(e.target.value)}
             >
               <option value="">All</option>
-              {[...new Set(strategies.map(s => s.author))].map(author => (
+              {[...new Set(strategies.map(s => s.author))].sort().map(author => (
                 <option key={author} value={author}>
                   {author}
                 </option>
@@ -344,7 +344,7 @@ export default function CopingHub() {
               onChange={(e) => setSelectedTag(e.target.value)}
             >
               <option value="">All</option>
-              {Object.keys(TAG_LABELS).map(tag => (
+              {Object.keys(TAG_LABELS).sort().map(tag => (
                 <option key={tag} value={tag}>
                   {TAG_LABELS[tag]}
                 </option>
@@ -370,6 +370,10 @@ export default function CopingHub() {
         {/* LEFT COLUMN */}
         <aside className="copinghub-left">
           <h3>Recommended Strategy for You</h3>
+
+          <p className="recommendation-note">
+            Recommendations are based on emotions recorded in your diary over the past 14 days.
+          </p>
 
           {recommended.length === 0 ? (
             <p>No recommendations available yet.</p>
@@ -466,7 +470,7 @@ export default function CopingHub() {
                     toggleBookmark(strategy.id);
                   }}
                 >
-                  {bookmarkedIds.includes(strategy.id) ? "⭐" : "☆"}
+                  {bookmarkedIds.includes(strategy.id) ? "★" : "☆"}
                 </button>
             </div>
             ))

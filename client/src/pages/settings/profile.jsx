@@ -119,20 +119,22 @@ export default function Profile() {
      SAVE FUNCTIONS
   ====================== */
   const saveDisplayName = async () => {
-    if (!newDisplayName.trim()) return;
-
     setSaving(true);
+
     try {
+      const value = newDisplayName.trim();
+
       await updateDoc(doc(db, "users", auth.currentUser.uid), {
-        profileDisplayName: newDisplayName.trim(),
+        profileDisplayName: value || null
       });
 
       setUserData((prev) => ({
         ...prev,
-        profileDisplayName: newDisplayName.trim(),
+        profileDisplayName: value || null
       }));
 
       setEditingField(null);
+
     } finally {
       setSaving(false);
     }
@@ -166,8 +168,18 @@ export default function Profile() {
 
   const saveAge = async () => {
     const age = Number(newAge);
-    if (!age || age < 13 || age > 120) {
+    if (!age) {
       alert("Please enter a valid age");
+      return;
+    }
+
+    if (age < 18) {
+      alert("Age cannot be smaller than 18.");
+      return;
+    }
+
+    if (age > 120) {
+      alert("Age cannot be greater than 120.");
       return;
     }
 
@@ -297,7 +309,7 @@ export default function Profile() {
                   <button onClick={cancelEdit} disabled={saving}>Cancel</button>
                 </>
               ) : (
-                <button className="edit-btn" onClick={() => startEdit("name")}>
+                <button className="edit-btn" onClick={() => startEdit("username")}>
                   <img src={editIcon} alt="Edit" className="edit-icon" />
                 </button>
               )}
@@ -333,7 +345,7 @@ export default function Profile() {
                   <button onClick={cancelEdit} disabled={saving}>Cancel</button>
                 </>
               ) : (
-                <button className="edit-btn" onClick={() => startEdit("name")}>
+                <button className="edit-btn" onClick={() => startEdit("age")}>
                   <img src={editIcon} alt="Edit" className="edit-icon" />
                 </button>
               )}
@@ -365,7 +377,7 @@ export default function Profile() {
                   <button onClick={cancelEdit} disabled={saving}>Cancel</button>
                 </>
               ) : (
-                <button className="edit-btn" onClick={() => startEdit("name")}>
+                <button className="edit-btn" onClick={() => startEdit("gender")}>
                   <img src={editIcon} alt="Edit" className="edit-icon" />
                 </button>
               )}

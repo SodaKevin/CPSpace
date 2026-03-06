@@ -40,6 +40,7 @@ export default function AssessmentHistory() {
             type: data.type,
             score: data.score,
             severity: data.severity,
+            answers: data.answers || {},
             date: data.createdAt
               ? data.createdAt.toDate().toISOString().split("T")[0]
               : "—",
@@ -104,6 +105,7 @@ export default function AssessmentHistory() {
                         type: item.type,
                         score: item.score,
                         severity: item.severity,
+                        answers: item.answers,
                       },
                     })
                   }

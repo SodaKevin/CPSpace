@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getAuth } from "firebase/auth";
 import {
@@ -21,19 +21,45 @@ import { TAG_LABELS } from "../../domain/tagLabels";
 export default function AssessmentReport() {
   const navigate = useNavigate();
   const location = useLocation();
-
   const [report, setReport] = useState(null);
-
   const [recommendations, setRecommendations] = useState([]);
+  const reportRef = useRef(null);
 
-  // 1️⃣ Load from route state if available
+  const GAD7_QUESTIONS = [
+    "Feeling nervous, anxious, or on edge",
+    "Not being able to stop or control worrying",
+    "Worrying too much about different things",
+    "Trouble relaxing",
+    "Being so restless that it is hard to sit still",
+    "Becoming easily annoyed or irritable",
+    "Feeling afraid as if something awful might happen",
+  ];
+
+  const PHQ9_QUESTIONS = [
+    "Little interest or pleasure in doing things",
+    "Feeling down, depressed, or hopeless",
+    "Trouble falling or staying asleep",
+    "Feeling tired or having little energy",
+    "Poor appetite or overeating",
+    "Feeling bad about yourself",
+    "Trouble concentrating",
+    "Moving or speaking slowly",
+    "Thoughts of self harm",
+  ];
+
+  const OPTIONS = [
+    "Not at all",
+    "Several days",
+    "More than half the days",
+    "Nearly every day",
+  ];
+
   useEffect(() => {
     if (location.state) {
       setReport(location.state);
     }
   }, [location.state]);
 
-  // 2️⃣ Fallback: load latest assessment from Firestore
   useEffect(() => {
     const fetchLatest = async () => {
       if (location.state) return;
@@ -56,6 +82,7 @@ export default function AssessmentReport() {
           type: data.type,
           score: data.score,
           severity: data.severity,
+          answers: data.answers || {}
         });
       }
     };
@@ -101,14 +128,42 @@ export default function AssessmentReport() {
 
   const { type, score, severity } = report;
 
+  const handlePrint = () => {
+    window.print();
+  };
+
   return (
-    <div className="assessment-panel report">
+  <div className="assessment-panel report">
+    <div ref={reportRef}>
       <h2>{type} Assessment Report</h2>
 
       <p className="assessment-intro">
         This report summarizes your responses based on the assessment you
         completed. It is not a medical diagnosis.
       </p>
+
+      {report.answers && (
+        <div className="report-card">
+          <h3>User Responses</h3>
+
+          {Object.entries(report.answers).map(([index, value]) => {
+            const questions =
+              report.type === "GAD-7" ? GAD7_QUESTIONS : PHQ9_QUESTIONS;
+
+            return (
+              <div key={index} className="report-row">
+                <span className="label">
+                  {Number(index) + 1}. {questions[index]}
+                </span>
+
+                <span className="value">
+                  {OPTIONS[value]}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      )}
 
       <div className="report-card">
         <div className="report-row">
@@ -137,7 +192,7 @@ export default function AssessmentReport() {
       </div>
 
       {recommendations.length > 0 && (
-        <div className="report-card">
+        <div className="report-card recommendations">
           <h3 style={{ marginBottom: "12px" }}>
             Recommended Coping Strategies
           </h3>
@@ -166,26 +221,32 @@ export default function AssessmentReport() {
           ))}
         </div>
       )}
+    </div>
 
-      <div className="report-actions">
-        <button onClick={() => navigate("/assessments")}>
-          Take Another Test
-        </button>
+    <div className="report-actions">
+      <button onClick={handlePrint}>
+        Print as PDF
+      </button>
 
-        <button
-          className="primary"
-          onClick={() =>
-            navigate("/coping-hub", {
-              state: {
-                fromAssessment: true,
-                severity,
-              },
-            })
-          }
-        >
-          View Coping Strategies
-        </button>
-      </div>
+      <button onClick={() => navigate("/assessments")}>
+        Take Another Test
+      </button>
+
+      <button
+        className="primary"
+        onClick={() =>
+          navigate("/coping-hub", {
+            state: {
+              fromAssessment: true,
+              severity,
+            },
+          })
+        }
+      >
+        View Coping Strategies
+      </button>
+
+    </div>
     </div>
   );
 }

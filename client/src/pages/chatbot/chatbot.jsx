@@ -37,6 +37,7 @@ export default function Chatbot() {
   const [feedbackText, setFeedbackText] = useState("");
   const [submittingFeedback, setSubmittingFeedback] = useState(false);
   const [feedbackError, setFeedbackError] = useState("");
+  const [displayName, setDisplayName] = useState("");
 
   const menuRef = useRef(null);
   const sendingRef = useRef(false);
@@ -96,6 +97,8 @@ export default function Chatbot() {
           setChatbotTone(
             allowedTones.includes(toneFromDB) ? toneFromDB : "casual"
           );
+
+          setDisplayName(data.profileDisplayName || "there");
         }
       });
 
@@ -416,22 +419,9 @@ export default function Chatbot() {
     setSubmittingFeedback(true);
 
     try {
-      const userSnap = await getDoc(doc(db, "users", user.uid));
-
-      let username = "Anonymous";
-
-      if (userSnap.exists()) {
-        const data = userSnap.data();
-
-        if (data.username?.value) {
-          username = data.username.discriminator
-            ? `${data.username.value}#${data.username.discriminator}`
-            : data.username.value;
-        }
-      }
-
       await addDoc(collection(db, "chatbotFeedback"), {
         userId: user.uid,
+        username: displayName,
         sessionId: activeSessionId,
         rating: feedbackRating,
         description: feedbackText.trim(),
@@ -448,13 +438,6 @@ export default function Chatbot() {
     } finally {
       setSubmittingFeedback(false);
     }
-  };
-
-  const resetFeedbackState = () => {
-    setFeedbackRating(0);
-    setHoverRating(0);
-    setFeedbackText("");
-    setFeedbackError("");
   };
 
   /* =====================
@@ -477,12 +460,7 @@ export default function Chatbot() {
 
             {menuOpen && (
               <div className="chat-menu">
-                <button
-                  onClick={() => {
-                    resetFeedbackState();
-                    setShowFeedback(true);
-                  }}
-                >
+                <button onClick={() => setShowFeedback(true)}>
                   Submit Feedback
                 </button>
                 <button
@@ -589,20 +567,34 @@ export default function Chatbot() {
             </div>
 
             <label>Description (optional)</label>
-            <textarea
-              value={feedbackText}
-              onChange={(e) => setFeedbackText(e.target.value)}
-            />
+
+            <div className="feedback-textarea-wrapper">
+              <textarea
+                value={feedbackText}
+                maxLength={1000}
+                onChange={(e) => setFeedbackText(e.target.value)}
+              />
+
+              <span className={`feedback-counter ${feedbackText.length > 900 ? "limit" : ""}`}>
+                {feedbackText.length} / 1000
+              </span>
+            </div>
+
+            {/* Warning messages */}
+            {feedbackText.length >= 900 && feedbackText.length < 1000 && (
+              <p className="feedback-warning">
+                You are nearing the character limit.
+              </p>
+            )}
+
+            {feedbackText.length === 1000 && (
+              <p className="feedback-error">
+                You have reached the maximum character limit.
+              </p>
+            )}
 
             <div className="modal-actions">
-              <button
-                onClick={() => {
-                  resetFeedbackState();
-                  setShowFeedback(false);
-                }}
-              >
-                Cancel
-              </button>
+              <button onClick={() => setShowFeedback(false)}>Cancel</button>
               <button
                 className="primary"
                 onClick={submitFeedback}
@@ -650,4 +642,3 @@ export default function Chatbot() {
     </div>
   );
 }
-

@@ -1,20 +1,24 @@
 export const STRATEGY_INTENT = {
+
   BREATHING: {
     allowedEmotions: [
       "anxious",
       "afraid",
       "angry",
       "annoyed",
-      "overwhelmed"
+      "overwhelmed",
+      "excited"
     ],
   },
 
-  STRETCHING: {   
+  STRETCHING: {
     allowedEmotions: [
       "drained",
       "anxious",
       "angry",
-      "annoyed"
+      "annoyed",
+      "excited",
+      "joyful"
     ],
   },
 
@@ -23,7 +27,10 @@ export const STRATEGY_INTENT = {
       "drained",
       "hopeless",
       "angry",
-      "anxious"
+      "anxious",
+      "excited",
+      "joyful",
+      "relieved"
     ],
   },
 
@@ -34,7 +41,9 @@ export const STRATEGY_INTENT = {
       "annoyed",
       "angry",
       "drained",
-      "overwhelmed"
+      "overwhelmed",
+      "excited",
+      "relieved"
     ],
   },
 
@@ -64,7 +73,10 @@ export const STRATEGY_INTENT = {
       "hopeless",
       "lonely",
       "drained",
-      "confused"
+      "confused",
+      "joyful",
+      "proud",
+      "grateful"
     ],
   },
 
@@ -73,7 +85,10 @@ export const STRATEGY_INTENT = {
       "guilty",
       "hopeless",
       "lonely",
-      "drained"
+      "drained",
+      "proud",
+      "hopeful",
+      "grateful"
     ],
   },
 
@@ -101,7 +116,11 @@ export const STRATEGY_INTENT = {
       "calm",
       "content",
       "hopeful",
-      "lonely"
+      "grateful",
+      "joyful",
+      "proud",
+      "relieved",
+      "amazed"
     ],
   },
 
@@ -110,7 +129,9 @@ export const STRATEGY_INTENT = {
       "hopeless",
       "drained",
       "lonely",
-      "sad"
+      "sad",
+      "hopeful",
+      "excited"
     ],
   },
 
@@ -120,7 +141,9 @@ export const STRATEGY_INTENT = {
       "hopeless",
       "anxious",
       "lonely",
-      "afraid"
+      "afraid",
+      "proud",
+      "hopeful"
     ],
   },
 };

@@ -71,6 +71,7 @@ export default function GAD7() {
         collection(db, "users", user.uid, "assessments"),
         {
           type: "GAD-7",
+          answers,
           score,
           severity,
           createdAt: serverTimestamp(),
@@ -83,6 +84,7 @@ export default function GAD7() {
           type: "GAD-7",
           score,
           severity,
+          answers
         },
       });
     } catch (err) {

@@ -335,7 +335,43 @@
   transform: scale(0.95);
 }
 
-.strategy-link {
+.feedback-textarea-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.feedback-textarea-wrapper textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: 10px;
+  padding-bottom: 28px; /* space for counter */
+  resize: vertical;
+}
+
+.feedback-counter {
+  position: absolute;
+  bottom: 12px;
+  right: 10px;
+
+  font-size: 12px;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.modal .feedback-warning {
+  color: #ef4444;
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+.modal .feedback-error {
+  color: #ef4444;
+  font-size: 13px;
+  margin-top: 4px;
+  font-weight: 500;
+}
+
+.chatbot-page .strategy-link {
   color: var(--accent) !important;
   font-weight: 700;
   text-decoration: underline;

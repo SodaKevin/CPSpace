@@ -54,18 +54,65 @@
   font-size: 14px;
   color: var(--text-main);
   line-height: 1.5;
+
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+
+  overflow: hidden;
+}
+
+.feedback-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+}
+
+.feedback-date {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.feedback-detail-btn {
+  padding: 6px 12px;
+
+  background: #ffffff;
+  color: #000000;
+
+  border: 1px solid #000000;
+  border-radius: 6px;
+
+  font-size: 13px;
+  cursor: pointer;
+
+  transition: background 0.2s ease;
+}
+
+.feedback-detail-btn:hover {
+  background: #f3f4f6;
+}
+
+.feedback-actions {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+
+  display: flex;
+  gap: 8px;
 }
 
 /* =========================
    DELETE BUTTON
 ========================= */
 
-/* =========================
-   DELETE BUTTON
-========================= */
-
 .feedback-delete-btn {
-  position: absolute;
   top: 12px;
   right: 12px;
 

@@ -1,12 +1,25 @@
 import { useEffect, useState } from "react";
 import { collection, getDocs, getDoc, deleteDoc, doc } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
+import { useNavigate } from "react-router-dom";
 import "./chatbotFeedback.css"; // keep your layout css
 import "../settings/preferences.css"; // reuse modal styles
 
 export default function ChatbotFeedback() {
   const [feedbackList, setFeedbackList] = useState([]);
   const [confirmId, setConfirmId] = useState(null);
+
+  const ITEMS_PER_PAGE = 10;
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const totalPages = Math.ceil(feedbackList.length / ITEMS_PER_PAGE);
+
+  const paginatedFeedback = feedbackList.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function fetchFeedback() {
@@ -53,6 +66,13 @@ export default function ChatbotFeedback() {
     fetchFeedback();
   }, []);
 
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "auto"
+    });
+  }, [currentPage]);
+
   const confirmDelete = async () => {
     if (!confirmId) return;
 
@@ -73,8 +93,9 @@ export default function ChatbotFeedback() {
         <p className="feedback-empty">No feedback yet.</p>
       )}
 
-      {feedbackList.map((f) => (
+      {paginatedFeedback.map((f) => (
         <div key={f.id} className="feedback-card">
+
           <div className="feedback-user">
             User: {f.username || f.userId}
           </div>
@@ -83,18 +104,68 @@ export default function ChatbotFeedback() {
             Rating: {f.rating} / 5
           </div>
 
-          <div className="feedback-message" style={{ whiteSpace: "pre-wrap" }}>
+          <div className="feedback-message">
             {f.description || "No description provided."}
           </div>
 
+          <span className="feedback-date">
+            {f.createdAt
+              ? new Date(f.createdAt.seconds * 1000).toLocaleDateString()
+              : ""}
+          </span>
+
+          <div className="feedback-actions">
+
           <button
-            className="feedback-delete-btn"
-            onClick={() => setConfirmId(f.id)}
+            className="feedback-detail-btn"
+            onClick={() => navigate(`/admin/chatbot-feedback/${f.id}`)}
           >
-            Delete
+            Detail
           </button>
+
+            <button
+              className="feedback-delete-btn"
+              onClick={() => setConfirmId(f.id)}
+            >
+              Delete
+            </button>
+          </div>
         </div>
       ))}
+
+      {totalPages > 1 && (
+        <div className="pagination">
+
+          <button
+            className="page-nav"
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage(p => p - 1)}
+          >
+            ‹
+          </button>
+
+          <div className="page-numbers">
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <button
+                key={page}
+                className={`page-number ${page === currentPage ? "active" : ""}`}
+                onClick={() => setCurrentPage(page)}
+              >
+                {page}
+              </button>
+            ))}
+          </div>
+
+          <button
+            className="page-nav"
+            disabled={currentPage === totalPages}
+            onClick={() => setCurrentPage(p => p + 1)}
+          >
+            ›
+          </button>
+
+        </div>
+      )}
 
       {/* ===== CONFIRM MODAL ===== */}
       {confirmId && (

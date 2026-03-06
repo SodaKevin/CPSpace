@@ -125,6 +125,26 @@ export default function StrategyDetail() {
     }
   };
 
+  function linkify(text) {
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+
+    return text.split(urlRegex).map((part, i) => {
+      if (part.match(urlRegex)) {
+        return (
+          <a
+            key={i}
+            href={part}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {part}
+          </a>
+        );
+      }
+      return part;
+    });
+  }
+
   return(
     <div className="strategy-detail-page">
     <div className="strategy-title-row">
@@ -155,7 +175,7 @@ export default function StrategyDetail() {
       </div>
 
       <div className="strategy-description">
-        {strategy.description}
+        {linkify(strategy.description)}
       </div>
 
       {strategy.audioUrl && (
@@ -170,9 +190,11 @@ export default function StrategyDetail() {
         </div>
       )}
 
+      <hr className="strategy-divider" />
+
       <div className="strategy-description">
         <strong>Instructions</strong>
-        <p>{strategy.instructions}</p>
+        <p>{linkify(strategy.instructions)}</p>
       </div>
     </div>
   );

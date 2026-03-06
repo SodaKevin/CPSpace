@@ -40,6 +40,7 @@ export default function Preferences() {
   const [showAutoConfirm, setShowAutoConfirm] = useState(false);
   const [showDisableConfirm, setShowDisableConfirm] = useState(false);
   const [autoLoading, setAutoLoading] = useState(false);
+  const [autoError, setAutoError] = useState("");
 
   /* === APPLY UI EFFECTS (your old logic) === */
   const applyTheme = (mode) => {
@@ -139,6 +140,8 @@ export default function Preferences() {
         <label>Chatbot Tone</label>
         <select
           value={prefs.chatbotTone}
+          disabled={prefs.autoPersonalisation}
+          className={prefs.autoPersonalisation ? "disabled" : ""}
           onChange={(e) =>
             savePrefs({ chatbotTone: e.target.value })
           }
@@ -153,6 +156,11 @@ export default function Preferences() {
       <div className="setting-row">
         <label>Theme</label>
         <div className="theme-toggle">
+          <div
+            className={`theme-slider ${
+              prefs.themeMode === "dark" ? "right" : "left"
+            }`}
+          />
         <div
           className={`theme-circle ${prefs.themeMode === "light" ? "active" : ""} ${
             prefs.autoPersonalisation ? "disabled" : ""
@@ -182,6 +190,14 @@ export default function Preferences() {
       <div className="setting-row">
         <label>Color Palette</label>
         <div className="color-palette">
+          <div
+            className="color-slider"
+            style={{
+              transform: `translateX(${
+                Object.keys(COLOR_MAP).indexOf(prefs.colorPalette) * 52
+              }px) scale(1.15)`
+            }}
+          />
         {Object.keys(COLOR_MAP).map((color) => (
           <div
             key={color}
@@ -201,16 +217,24 @@ export default function Preferences() {
       {/* Auto Personalisation */}
       <div className="setting-row">
         <label>Auto Personalisation</label>
+
+        <p className="auto-description">
+          Auto personalisation analyses emotional patterns from your most recent
+          diary records (up to 14 entries) to adjust theme, color palette,
+          and chatbot tone automatically.
+        </p>
+
         <div className="yes-no">
-          <button
-            className={prefs.autoPersonalisation ? "active" : ""}
-            onClick={() => {
-              if (prefs.autoPersonalisation || showAutoConfirm) return;
-              setShowAutoConfirm(true);
-            }}
-          >
-            YES
-          </button>
+        <button
+          className={prefs.autoPersonalisation ? "active" : ""}
+          onClick={() => {
+            if (prefs.autoPersonalisation || showAutoConfirm) return;
+            setAutoError("");
+            setShowAutoConfirm(true);
+          }}
+        >
+          YES
+        </button>
           <button
             className={!prefs.autoPersonalisation ? "active" : ""}
             onClick={() => {
@@ -220,7 +244,10 @@ export default function Preferences() {
           >
             NO
           </button>
-        </div> 
+        </div>
+        {autoError && (
+          <p className="auto-error">{autoError}</p>
+        )}
       </div>
       {showAutoConfirm && (
       <div className="pref-modal-overlay">
@@ -248,7 +275,7 @@ export default function Preferences() {
                 console.log("Auto-personalisation diaries FULL:", JSON.stringify(diaries, null, 2));
 
                 if (!diaries.length) {
-                  alert("Please record at least one emotion diary before using Auto Personalisation.");
+                  setAutoError("You must record at least one emotion diary before enabling Auto Personalisation.");
                   await savePrefs({ autoPersonalisation: false });
                   setAutoLoading(false);
                   setShowAutoConfirm(false);

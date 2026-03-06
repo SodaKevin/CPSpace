@@ -18,6 +18,9 @@ export default function EditStrategy() {
   const [audioFile, setAudioFile] = useState(null);
   const [videoFile, setVideoFile] = useState(null);
 
+  const [descLength, setDescLength] = useState(0);
+  const [instLength, setInstLength] = useState(0);
+
   const [existingAudio, setExistingAudio] = useState(null);
   const [existingVideo, setExistingVideo] = useState(null);
 
@@ -45,6 +48,9 @@ export default function EditStrategy() {
           instructions: data.instructions || "",
           tags: Array.isArray(data.tags) ? data.tags : [],
         });
+        
+        setDescLength((data.description || "").length);
+        setInstLength((data.instructions || "").length);
 
         setExistingAudio(data.audioUrl || null);
         setExistingVideo(data.videoUrl || null);
@@ -59,11 +65,31 @@ export default function EditStrategy() {
   }, [id, navigate]);
 
   function handleChange(e) {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+
+    if (name === "description") {
+      if (value.length > 500) return;
+      setDescLength(value.length);
+    }
+
+    if (name === "instructions") {
+      if (value.length > 2000) return;
+      setInstLength(value.length);
+    }
+
+    setForm(prev => ({
+      ...prev,
+      [name]: value
+    }));
   }
 
-  async function handleSubmit(e) {
+async function handleSubmit(e) {
     e.preventDefault();
+
+    if (form.tags.length === 0) {
+      alert("Please select at least one tag.");
+      return;
+    }
 
     let audioUrl = existingAudio;
     let videoUrl = existingVideo;
@@ -143,37 +169,85 @@ export default function EditStrategy() {
       <h2>Edit Coping Strategy</h2>
 
       <form className="strategy-form" onSubmit={handleSubmit}>
+        <label>Title</label>
+
         <input
           name="title"
-          placeholder="Title"
+          placeholder="Enter title..."
           value={form.title}
           onChange={handleChange}
+          maxLength={100}
           required
         />
+
+        <label>Author</label>
 
         <input
           name="author"
-          placeholder="Author"
+          placeholder="Enter author..."
           value={form.author}
           onChange={handleChange}
+          maxLength={100}
           required
         />
 
-        <textarea
-          name="description"
-          placeholder="Description"
-          value={form.description}
-          onChange={handleChange}
-          required
-        />
+        <label>Description</label>
 
-        <textarea
-          name="instructions"
-          placeholder="Instructions"
-          value={form.instructions}
-          onChange={handleChange}
-          required
-        />
+        <div className="strategy-textarea-wrapper">
+          <textarea
+            name="description"
+            placeholder="Enter description..."
+            value={form.description}
+            onChange={handleChange}
+            maxLength={500}
+            required
+          />
+
+          <span className={`strategy-counter ${descLength > 450 ? "limit" : ""}`}>
+            {descLength} / 500
+          </span>
+        </div>
+
+        {descLength >= 450 && descLength < 500 && (
+          <p className="strategy-warning">
+            You are nearing the character limit.
+          </p>
+        )}
+
+        {descLength === 500 && (
+          <p className="strategy-error">
+            You have reached the maximum character limit.
+          </p>
+        )}
+
+        <label>Instructions</label>
+
+        <div className="strategy-textarea-wrapper">
+          <textarea
+            name="instructions"
+            placeholder="Enter instructions..."
+            value={form.instructions}
+            onChange={handleChange}
+            maxLength={2000}
+            required
+          />
+
+          <span className={`strategy-counter ${instLength > 1800 ? "limit" : ""}`}>
+            {instLength} / 2000
+          </span>
+        </div>
+
+        {instLength >= 1800 && instLength < 2000 && (
+          <p className="strategy-warning">
+            You are nearing the character limit.
+          </p>
+        )}
+
+        {instLength === 2000 && (
+          <p className="strategy-error">
+            You have reached the maximum character limit.
+          </p>
+        )}
 
         <div className="tag-selection">
           <label className="section-label">Select Tags</label>
